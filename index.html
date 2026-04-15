@@ -2,866 +2,560 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>Amplitude Prospect Hub — Portillo's</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Amplitude Prospect Hub</title>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F7F7F7;color:#0D0D0D}
-    a{color:inherit;text-decoration:none}
-    button{cursor:pointer;font-family:inherit;border:none;background:none}
-    .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
-    /* Scrollbar */
-    ::-webkit-scrollbar{width:6px}
-    ::-webkit-scrollbar-track{background:#f1f1f1}
-    ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+    body{font-family:system-ui,-apple-system,sans-serif;background:#F7F7F7}
+    input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:#FF6B00;flex-shrink:0}
+    .hover-lift{transition:box-shadow .2s,transform .2s}
+    .hover-lift:hover{box-shadow:0 8px 32px rgba(0,0,0,.12)!important;transform:translateY(-2px)}
+    .tab-btn{border:none;cursor:pointer;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;transition:all .15s}
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-
-const { useState, useEffect } = React;
-
-// ─── Brand Colors ─────────────────────────────────────────────────────────────
+const {useState,useEffect,useRef} = React;
 const C = {
-  orange:    '#FF6B00',
-  dark:      '#0D0D0D',
-  white:     '#FFFFFF',
-  grayLight: '#F7F7F7',
-  border:    '#E5E5E5',
-  textMuted: '#6B6B6B',
-  green:     '#22C55E',
-  blue:      '#3B82F6',
-  amber:     '#F59E0B',
-  purple:    '#8B5CF6',
-  red:       '#EF4444',
+  orange:'#FF6B00', dark:'#0D0D0D', gray:'#1C1C1C',
+  grayMid:'#3A3A3A', grayLight:'#F7F7F7', border:'#E5E5E5',
+  white:'#FFFFFF', textMuted:'#6B6B6B',
+  amber:'#F59E0B', green:'#22C55E', blue:'#3B82F6',
+  purple:'#8B5CF6', red:'#EF4444',
 };
-
-// ─── Date Helpers ─────────────────────────────────────────────────────────────
-function addDays(n) {
-  const d = new Date();
-  d.setDate(d.getDate() + n);
-  return d.toISOString().split('T')[0];
-}
-function isOverdue(dateStr) {
-  return new Date(dateStr) < new Date(new Date().toDateString());
-}
-function fmtDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-// ─── Account Data ─────────────────────────────────────────────────────────────
+const today = new Date();
+const addDays = n => { const d=new Date(today); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0]; };
+const fmt = s => { const [y,m,d]=s.split('-'); return `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]} ${+d}`; };
+const isOverdue = s => new Date(s) < today;
+// ─── DATA ───────────────────────────────────────────────────────────────────
 const ACCOUNTS = {
+  teachable: {
+    id:'teachable', name:'Teachable', industry:'EdTech', domain:'teachable.com',
+    tagline:'Unified product intelligence for the future of online learning',
+    signal:'Active Evaluation', signalColor:C.green,
+    products:['Analytics','Session Replay','Guides'],
+    summary:"Teachable is building AI-powered adaptive learning while managing analytics across disconnected tools. Amplitude brings it together.",
+    whatTheyDo:"Teachable is a creator education platform that lets individuals and businesses build, market, and sell online courses, coaching programs, and digital products. They serve 100K+ creators globally — from solo instructors to enterprise brands — with tools spanning course hosting, student management, mobile learning, and payments.",
+    heroTitle:'From fragmented insights to one unified view of your learners.',
+    heroSub:"Teachable is building the next generation of AI-powered learning — adaptive assessments, personalized pathways, a mobile app with 130K+ monthly active users. The product teams driving those decisions deserve a single platform to understand learner behavior, debug friction, and launch in-product experiences without waiting on engineering.",
+    stats:[
+      {value:'130K+',label:'Monthly mobile app users'},
+      {value:'4',label:'New plan tiers launched in 2025'},
+      {value:'3+',label:'Disconnected analytics tools today'},
+      {value:'$100K',label:'Estimated consolidation savings'},
+    ],
+    challengeTitle:'Growing product complexity demands unified visibility.',
+    challengeBody:"As Teachable's product footprint expands — AI features, mobile, commerce — the gap between what's happening in the product and what teams can actually see grows wider. When behavioral analytics, session recordings, feature flags, and in-app messaging live in separate tools, the cost isn't just inefficiency. It's slower decisions, missed activation moments, and AI features shipped without the instrumentation to know if they're working.",
+    techStack:[
+      {tool:'Mixpanel',category:'Product Analytics',confidence:'confirmed',displacement:"Core product analytics — Amplitude consolidates this with Session Replay and Guides into one platform, eliminating the data silo."},
+      {tool:'Google Analytics',category:'Web Analytics',confidence:'confirmed',displacement:"Web traffic only, siloed from in-product behavior. Amplitude unifies both views in one behavioral model."},
+      {tool:'Hotjar',category:'Session Replay',confidence:'likely',displacement:"Session recordings disconnected from event data. Amplitude Replay links directly to behavioral events — no tool-switching to diagnose drop-off."},
+      {tool:'Intercom',category:'In-app Messaging',confidence:'likely',displacement:"Messaging without behavioral targeting. Amplitude Guides triggers based on what users have or haven't done — no engineer required."},
+    ],
+    gaps:[
+      {name:'A/B Experimentation',detail:"No confirmed experimentation tool — they're shipping AI features without a way to measure impact vs. control."},
+      {name:'CDP / Data Layer',detail:"No unified event schema. Mobile, web, and commerce events are fragmented across tools."},
+    ],
+    features:[
+      {icon:'📊',title:'Course Completion Analytics',body:"Understand exactly where learners drop off in your course funnels. Connect enrollment events to completion rates and fix friction with evidence — not guesswork."},
+      {icon:'🎥',title:'Session Replay, Connected to Events',body:"When you see a drop-off in your funnel, watch the exact sessions that explain it — without switching tools. Replay is linked directly to behavioral events."},
+      {icon:'🎯',title:'In-Product Guides Without Engineering',body:"Launch onboarding flows and AI feature prompts that target users based on what they have or haven't done — from within Amplitude, no engineer required."},
+      {icon:'🤖',title:'AI Feature Instrumentation',body:"As Teachable ships adaptive assessments and personalized pathways, Amplitude measures whether users are adopting them and achieving better outcomes."},
+    ],
+    whyNow:[
+      "Teachable's 2026 roadmap is centered on AI-powered learning — adaptive assessments, personalized pathways, smarter certification flows. These features need behavioral instrumentation from day one to know if learners are engaging with AI guidance and achieving better outcomes than the baseline.",
+      "Mobile is no longer secondary — 130K monthly active users means mobile behavior needs to be in the same analytics platform as web, not a separate reporting silo. Every product decision that doesn't account for mobile is working with half the picture.",
+      "Getting Amplitude in place now — as these AI features ship and the mobile user base grows — means every product decision is made on complete, connected data. Waiting means instrumenting AI features retroactively, which is the hardest and most expensive time to do it.",
+    ],
+    products_detail:[
+      {name:'Analytics',desc:"Behavioral analytics and funnels — the core platform. Replaces fragmented tool-hopping with one source of truth for learner behavior."},
+      {name:'Session Replay',desc:"Watch real user sessions linked to your event data. Debug UX issues in minutes without recreating them manually."},
+      {name:'Guides',desc:"Launch in-product onboarding flows and feature announcements targeted by user behavior — no engineering required."},
+    ],
+    contacts:[
+      {name:'VP of Product / CPO',signal:'Economic Buyer',signalColor:C.orange,why:"Owns the analytics tool consolidation decision. Feels the pain of 3+ disconnected tools when PMs ask cross-platform questions.",messaging:"Lead with consolidation ROI: 'Your PMs are context-switching between Mixpanel, Hotjar, and Intercom to answer one question — that's a velocity problem, not a tooling problem.' Reference the 130K mobile MAU and AI roadmap as the why now.",channel:'LinkedIn',tip:'Search: "Teachable VP Product" or "Teachable CPO"'},
+      {name:'Head of Data / Analytics',signal:'Champion',signalColor:C.purple,why:"Building the dashboards PMs can't get answers from. Will evangelize internally once they see Amplitude's data model.",messaging:"'You're maintaining pipelines that were never meant to talk to each other. Amplitude makes the event schema the single source of truth — Mixpanel, GA, and Intercom data coexist in one warehouse-connected model.' Lead with technical depth.",channel:'Email',tip:'Search: "Teachable analytics engineer" or "Teachable data engineer"'},
+      {name:'Head of Growth',signal:'Stakeholder',signalColor:C.blue,why:"Cares about funnel optimization and experiment velocity. No experimentation tool = no way to run controlled tests on new AI features.",messaging:"'How are you measuring whether the new adaptive assessment feature actually improves completion vs. the control group?' The A/B testing gap is the sharpest hook — they're shipping without a way to prove impact.",channel:'LinkedIn',tip:'Search: "Teachable Head of Growth" or "Teachable Growth PM"'},
+      {name:'CTO / VP Engineering',signal:'Technical Buyer',signalColor:C.grayMid,why:"Approves data infrastructure. Cares about SDK quality, warehouse integration, and not adding another point solution.",messaging:"'One SDK, one data contract, warehouse-native. Amplitude doesn't add pipeline complexity — it reduces it.' Frame as infrastructure consolidation, not analytics tool purchase.",channel:'Email',tip:'Search: "Teachable CTO" or "Teachable VP Engineering"'},
+      {name:'CEO / Co-Founder',signal:'Exec Sponsor',signalColor:C.orange,why:"New AI bets require measurement infrastructure. Strategic buy — gets approved at exec level when the ROI frame is clear.",messaging:"'Teachable is shipping AI features that need to earn their place in the roadmap. That only happens if you know whether users are engaging with them — and that requires instrumentation from day one.' Brief, peer-to-peer.",channel:'Email',tip:'Verify current CEO on LinkedIn or Crunchbase'},
+    ],
+    tasks:[
+      {id:'teach-1',title:'Find VP Product contact on LinkedIn',description:"Target: VP Product or CPO. Search 'Teachable VP Product' — confirm current name and verify they're still in role.",channel:'LinkedIn',due:addDays(1)},
+      {id:'teach-2',title:'Send first outreach email to VP Product',description:"Lead with consolidation pain: 3 disconnected tools + AI roadmap = the window is now. Use the AI feature instrumentation angle.",channel:'Email',due:addDays(2)},
+      {id:'teach-3',title:'Enroll Teachable in EdTech AI sequence in Outreach',description:"Sequence: EdTech AI + consolidation. Note prior touch history if any. Tag account in SFDC with intent signal.",channel:'Outreach',due:addDays(2)},
+      {id:'teach-4',title:'Follow up via LinkedIn — Head of Growth',description:"A/B testing gap angle: 'How are you measuring impact of the new adaptive assessment feature vs. baseline?' Under 100 words.",channel:'LinkedIn',due:addDays(5)},
+    ],
+  },
+  c2fo: {
+    id:'c2fo', name:'C2FO', industry:'FinTech', domain:'c2fo.com',
+    tagline:'Real-time product visibility for a platform scaling globally',
+    signal:'Expansion Signal', signalColor:C.blue,
+    products:['Analytics','Session Replay','CDP'],
+    summary:"C2FO just launched in Nigeria and closed $30M. As the platform expands globally, product intelligence needs to keep pace.",
+    whatTheyDo:"C2FO is a working capital marketplace that connects buyers and suppliers to accelerate cash flow through dynamic early payment programs. Businesses use C2FO to offer their suppliers early invoice payment in exchange for a discount — helping both sides optimize their balance sheets. They've facilitated over $400B in working capital across 2M+ companies in 180+ countries.",
+    heroTitle:'Real-time product visibility for a platform scaling globally.',
+    heroSub:"C2FO has crossed $400B in lifetime funding to customers, launched CycleFlow in Nigeria, expanded into India via C2treds, and secured $30M to accelerate further. At that pace, product teams need precise, real-time visibility into how suppliers and buyers across diverse markets are experiencing the platform — and whether they're activating successfully.",
+    stats:[
+      {value:'$400B+',label:'Lifetime funding facilitated'},
+      {value:'$30M',label:'Raised (IFC, 2025)'},
+      {value:'200+',label:'Global enterprise clients'},
+      {value:'3',label:'New market launches since 2024'},
+    ],
+    challengeTitle:'Global expansion at speed requires product intelligence that keeps pace.',
+    challengeBody:"When a platform launches in a new market — Nigeria, India, Southeast Asia — the first 30 days are critical. Are suppliers completing their first funding request? Where do buyers drop off in the onboarding flow? If that behavioral data is fragmented across production monitoring, marketing analytics, and BI tools, the window to iterate closes before the data arrives.",
+    techStack:[
+      {tool:'Google Analytics',category:'Web Analytics',confidence:'confirmed',displacement:"Web traffic only — no in-product behavioral data. Amplitude captures supplier/buyer events inside the platform that GA never sees."},
+      {tool:'Tableau / BI',category:'Business Intelligence',confidence:'likely',displacement:"Retroactive reporting. Amplitude gives product teams self-serve behavioral analytics without waiting on a data team query."},
+      {tool:'Datadog / New Relic',category:'Production Monitoring',confidence:'likely',displacement:"Infrastructure monitoring, not user behavior. Doesn't answer why suppliers aren't completing onboarding in Nigeria."},
+      {tool:'Salesforce Marketing Cloud',category:'Marketing Analytics',confidence:'signal only',displacement:"Marketing funnel only, siloed from product behavior. Amplitude bridges marketing-to-product journey in one behavioral model."},
+    ],
+    gaps:[
+      {name:'Product Analytics',detail:"No confirmed product analytics tool — behavioral data for onboarding funnels is blind across new markets."},
+      {name:'Session Replay',detail:"No session replay — when onboarding drop-off spikes in a new market, there's no way to watch what's happening."},
+      {name:'CDP',detail:"No unified data layer — events from web, mobile, and enterprise integrations are fragmented."},
+    ],
+    features:[
+      {icon:'🌍',title:'Onboarding Funnels by Market',body:"Track supplier and buyer onboarding completion rates across Nigeria, India, and established markets in a single view. Identify drop-off by region before it compounds."},
+      {icon:'🎥',title:'Session Replay for Friction Diagnosis',body:"When onboarding drop-off spikes in a new market, watch the exact sessions across device types and languages. Resolve UX issues in hours, not weeks."},
+      {icon:'📈',title:'Feature Adoption Across Cohorts',body:"Understand which enterprise clients are getting full value from the platform and which aren't. Know what correlates with successful funding outcomes."},
+      {icon:'🔗',title:'Connected Data — One Platform',body:"Stop bouncing between production monitoring, marketing tools, and BI. Amplitude consolidates product behavioral data so your team answers questions in one place."},
+    ],
+    whyNow:[
+      "C2FO just launched CycleFlow in Nigeria — the first phase of a continent-wide working capital strategy. New market launches create a narrow window where product decisions matter most: is the onboarding flow working for Nigerian SMEs? Are the right actions being completed?",
+      "Without real-time behavioral analytics connected to the product, those questions get answered too late — after churn signals appear, not before. The $30M IFC investment is earmarked for platform acceleration. That's a mandate to move fast, which means instrumentation needs to be in place before the next market launches, not after.",
+      "Amplitude gives C2FO's product team one platform to understand user behavior from first session to funded invoice — across every market, device type, and user persona. The global expansion happening now is the exact moment to put that infrastructure in place.",
+    ],
+    products_detail:[
+      {name:'Analytics',desc:"Behavioral analytics, funnels, and retention — one view of user behavior across every market and product surface."},
+      {name:'Session Replay',desc:"Watch real sessions linked to behavioral events. Identify onboarding friction in new markets before it becomes a retention problem."},
+      {name:'CDP',desc:"Consolidate event data from across the C2FO platform into a single, clean data layer. Reduce pipeline complexity across markets."},
+    ],
+    contacts:[
+      {name:'Chief Product Officer',signal:'Economic Buyer',signalColor:C.orange,why:"Owns the product analytics decision. Directly accountable for onboarding success in new markets.",messaging:"'You're launching in new markets every 6 months but product visibility into each launch is fragmented across 4 different tools. When Nigeria onboarding dropped, how fast did you know why?' Reference the $30M mandate to move fast.",channel:'Email',tip:'Search: "C2FO Chief Product Officer" or "C2FO VP Product"'},
+      {name:'Head of Data Analytics',signal:'Champion',signalColor:C.purple,why:"Building dashboards that can't answer behavioral questions. Tired of being the blocker between PMs and data.",messaging:"'C2FO's product teams are asking behavioral questions your BI stack wasn't built to answer — not without a data engineer in the loop. Amplitude is the self-serve layer that removes you from the critical path.'",channel:'LinkedIn',tip:'Search: "C2FO data analytics" or "C2FO analytics engineer"'},
+      {name:'VP Engineering / CTO',signal:'Technical Buyer',signalColor:C.grayMid,why:"The IFC investment means infrastructure needs to scale. Cares about SDK quality, data pipeline health, and not adding point solutions.",messaging:"'One SDK that instruments web and mobile simultaneously, warehouse-native schema, no additional data pipelines to maintain. Amplitude reduces infrastructure complexity — it doesn't add to it.'",channel:'Email',tip:'Search: "C2FO VP Engineering" or "C2FO CTO"'},
+      {name:'Head of Product — International',signal:'Stakeholder',signalColor:C.blue,why:"Owns the Nigeria and India launches day-to-day. Closest to the onboarding funnel failure modes.",messaging:"'You're launching in a market where you can't watch session replays because your current tool doesn't support the device mix. Amplitude does — and the events, replay, and funnel data are all in one place.'",channel:'LinkedIn',tip:'Search: "C2FO product manager" or "C2FO international"'},
+      {name:'Sandy Kemper — CEO',signal:'Exec Sponsor',signalColor:C.orange,why:"Just closed $30M with a mandate to accelerate global expansion. Strategic buy gets signed at exec level.",messaging:"'You're 30 days into Nigeria and you don't have real-time visibility into whether the product experience is landing. That's the gap Amplitude closes. As you expand to 5 more markets, instrumentation is the bet that pays off at every launch.' Brief, peer-to-peer.",channel:'Email',tip:'Sandy Kemper — C2FO founder. Verify current role on LinkedIn.'},
+    ],
+    tasks:[
+      {id:'c2fo-1',title:'Request warm intro via IFC network',description:"IFC is an Amplitude strategic partner. Ping #alliances on Slack: 'IFC just invested $30M in C2FO — can we get a warm intro through the IFC partnership?'",channel:'Partner',due:addDays(1)},
+      {id:'c2fo-2',title:'First outreach to CPO',description:"Lead with Nigeria onboarding visibility gap. Reference $30M IFC round as mandate to move fast. Use the 'how fast did you know why' angle.",channel:'Email',due:addDays(2)},
+      {id:'c2fo-3',title:'Enroll C2FO in global expansion sequence in Outreach',description:"Sequence: FinTech global expansion + product analytics. Tag account with 'expansion signal' and '$30M raise'. Note IFC intro attempt in SFDC.",channel:'Outreach',due:addDays(2)},
+      {id:'c2fo-4',title:'LinkedIn follow-up — Head of Data Analytics',description:"Data self-serve angle: 'C2FO's PMs are asking behavioral questions your BI stack wasn't built for.' Under 100 words. Send only if no CPO response.",channel:'LinkedIn',due:addDays(5)},
+    ],
+  },
   portillos: {
-    id: 'portillos',
-    name: "Portillo's",
-    industry: 'Restaurant / Hospitality',
-    domain: 'portillos.com',
-    signal: 'New CEO + CMO Installed',
-    signalColor: C.orange,
-    products: ['Experiment', 'Session Replay', 'Analytics'],
-    summary: "Public restaurant chain ($732M rev, 88 locations) with 2.1M loyalty members and no analytics layer — new CEO Feb 2026, new CMO Sept 2025, Hotjar confirmed.",
-    whatTheyDo: "Portillo's (NASDAQ: PTLO) is an iconic Chicago-style fast-casual chain with 88 locations and $732M in annual revenue. Famous for Italian beef, hot dogs, and chocolate cake, they serve millions of guests across dine-in, drive-thru, carry-out, delivery, and catering channels. Their Portillo's Perks loyalty program — launched March 2025 — has scaled to 2.1M members driving over 10% of system-wide sales.",
-    heroTitle: "Turn 2.1M Loyalty Members Into a Real-Time Behavioral Intelligence Engine",
-    heroSub: "Portillo's Perks went from zero to 2.1M members in under a year, generating rich behavioral data across every channel. Right now that data powers rewards — but there's no analytics layer sitting on top of it to understand what drives frequency, what converts a first-timer into a Top Dog, or why guests drop off mid-funnel. With a new CEO (Feb 2026), new CMO (Sept 2025), and an internal Amplitude sales play flagged as 'Web Experiment Land,' the timing is as clean as it gets.",
-    stats: [
-      { value: '$732M',  label: 'Annual Revenue (2025)' },
-      { value: '88',     label: 'Locations Nationwide' },
-      { value: '2.1M',   label: 'Perks Loyalty Members' },
-      { value: '>10%',   label: 'Sales from Digital Loyalty' },
+    id:'portillos', name:"Portillo's", industry:'Restaurant / Hospitality', domain:'portillos.com',
+    tagline:'Turn 2.1M Loyalty Members Into a Real-Time Behavioral Intelligence Engine',
+    signal:'New CEO + CMO Installed', signalColor:C.orange,
+    products:['Experiment','Session Replay','Analytics'],
+    summary:"Public restaurant chain ($732M rev, 88 locations) with 2.1M loyalty members and no analytics layer. New CEO Feb 2026, new CMO Sept 2025, Hotjar confirmed.",
+    whatTheyDo:"Portillo's (NASDAQ: PTLO) is an iconic Chicago-style fast-casual chain with 88 locations and $732M in annual revenue. Famous for Italian beef, hot dogs, and chocolate cake, they serve millions of guests across dine-in, drive-thru, carry-out, delivery, and catering channels. Their Portillo's Perks loyalty program — launched March 2025 — has scaled to 2.1M members driving over 10% of system-wide sales.",
+    heroTitle:"Turn 2.1M Loyalty Members Into a Real-Time Behavioral Intelligence Engine",
+    heroSub:"Portillo's Perks went from zero to 2.1M members in under a year, generating rich behavioral data across every channel. Right now that data powers rewards — but there's no analytics layer sitting on top of it to understand what drives frequency, what converts a first-timer into a Top Dog, or why guests drop off mid-funnel.",
+    stats:[
+      {value:'$732M', label:'Annual Revenue (2025)'},
+      {value:'88', label:'Locations Nationwide'},
+      {value:'2.1M', label:'Perks Loyalty Members'},
+      {value:'>10%', label:'Sales from Digital Loyalty'},
     ],
-    challengeTitle: "A Loyalty Program Generating Data With No Analytics Engine to Read It",
-    challengeBody: "Portillo's launched Portillo's Perks in March 2025 and scaled to 2.1M members — but the program is built on visit frequency and habit signals with no product analytics layer to interpret them. They're running Hotjar for session replay (web CX, disconnected from loyalty events) and Google Analytics for web traffic (no behavioral depth). As they expand into new markets and smaller 'Restaurant of the Future' formats, they need to know which digital experiences convert new-market guests — and right now, they can't answer that question.",
-    techStack: [
-      {
-        tool: 'Hotjar',
-        category: 'Session Replay',
-        confidence: 'confirmed',
-        displacement: 'Named in Portillo\'s privacy policy. Hotjar captures clicks and scrolls but is disconnected from loyalty events and ordering behavior. Amplitude Session Replay ties recordings directly to Perks member actions — you see the session of the specific user who dropped off before redeeming.',
-      },
-      {
-        tool: 'Google Analytics (GA4)',
-        category: 'Web Analytics',
-        confidence: 'confirmed',
-        displacement: 'GA4 handles page-level web traffic. It has no understanding of which loyalty member is browsing, what they ordered previously, or how digital touchpoints affect in-restaurant visit frequency. Amplitude Analytics fills the behavioral depth gap GA4 was never designed to provide.',
-      },
-      {
-        tool: 'Olo',
-        category: 'Online Ordering',
-        confidence: 'confirmed',
-        displacement: 'Olo powers their web/app ordering. Amplitude integrates with Olo event streams natively — every order event becomes a behavioral signal without re-instrumentation. This is the shortest path to a full data layer.',
-      },
-      {
-        tool: 'Meta Pixel',
-        category: 'Paid Advertising',
-        confidence: 'confirmed',
-        displacement: 'Named in privacy policy. Used for retargeting — but Portillo\'s is flying blind on which ad exposures actually change visit behavior. Amplitude connects ad exposure to in-restaurant and loyalty events with behavioral cohorts.',
-      },
+    challengeTitle:"A Loyalty Program Generating Data With No Analytics Engine to Read It",
+    challengeBody:"Portillo's launched Portillo's Perks in March 2025 and scaled to 2.1M members — but the program is built on visit frequency and habit signals with no product analytics layer to interpret them. They're running Hotjar for session replay (web CX, disconnected from loyalty events) and Google Analytics for web traffic (no behavioral depth). As they expand into new markets and smaller 'Restaurant of the Future' formats, they need to know which digital experiences convert new-market guests — and right now, they can't answer that question.",
+    techStack:[
+      {tool:'Hotjar', category:'Session Replay', confidence:'confirmed', displacement:"Named in Portillo's privacy policy. Hotjar captures clicks and scrolls but is disconnected from loyalty events and ordering behavior. Amplitude Session Replay ties recordings directly to Perks member actions — you see the session of the specific user who dropped off before redeeming."},
+      {tool:'Google Analytics (GA4)', category:'Web Analytics', confidence:'confirmed', displacement:"GA4 handles page-level web traffic. It has no understanding of which loyalty member is browsing, what they ordered previously, or how digital touchpoints affect in-restaurant visit frequency. Amplitude Analytics fills the behavioral depth gap GA4 was never designed to provide."},
+      {tool:'Olo', category:'Online Ordering', confidence:'confirmed', displacement:"Olo powers their web/app ordering. Amplitude integrates with Olo event streams natively — every order event becomes a behavioral signal without re-instrumentation. This is the shortest path to a full data layer."},
+      {tool:'Meta Pixel', category:'Paid Advertising', confidence:'confirmed', displacement:"Named in privacy policy. Used for retargeting — but Portillo's is flying blind on which ad exposures actually change visit behavior. Amplitude connects ad exposure to in-restaurant and loyalty events with behavioral cohorts."},
     ],
-    gaps: [
-      { name: 'No experimentation platform', detail: "Internal Amplitude sales play is flagged 'Web Experiment Land.' They're expanding into new formats (6,250 sqft Restaurant of the Future) and new markets with zero A/B testing infrastructure to optimize ordering UX, loyalty offer messaging, or menu layout." },
-      { name: 'Loyalty data without analytics', detail: '2.1M Perks members, 10%+ of sales — but no way to run cohort analysis on what drives a second visit, what badge mechanics improve frequency, or which market segments respond to which reward types.' },
-      { name: 'Session replay disconnected from loyalty events', detail: 'Hotjar records web sessions but has no concept of a Perks member ID. When a guest drops off before redeeming an offer, Portillo\'s can\'t replay that specific session with loyalty context attached.' },
-      { name: 'No in-product guidance for digital channel adoption', detail: "Portillo's is actively driving guests from in-restaurant to digital channels (app, drive-thru ordering, delivery). No tool exists to surface in-app onboarding guidance or nudges to drive Perks adoption at the right moment." },
+    gaps:[
+      {name:'No experimentation platform', detail:"Internal Amplitude sales play flagged 'Web Experiment Land.' Expanding into new Restaurant of the Future formats with zero A/B testing infrastructure to optimize ordering UX, loyalty offer messaging, or menu layout."},
+      {name:'Loyalty data without analytics', detail:"2.1M Perks members, 10%+ of sales — but no way to run cohort analysis on what drives a second visit, what badge mechanics improve frequency, or which market segments respond to which reward types."},
     ],
-    features: [
-      { icon: '🧪', title: 'Experiment', body: "A/B test loyalty offer sequencing, menu placement in the ordering app, drive-thru upsell language, and new-market launch digital flows — with statistical significance built in." },
-      { icon: '🎥', title: 'Session Replay', body: "Replace Hotjar with replays tied to Perks member IDs. When a loyalty member drops off before redeeming, replay their exact session with their ordering history as context." },
-      { icon: '📊', title: 'Analytics', body: "Build behavioral cohorts on 2.1M Perks members — cohort by visit frequency, badge tier, market, and order channel. Understand what drives a first-timer to become a Top Dog." },
+    features:[
+      {icon:'🧪', title:'Experiment', body:"A/B test loyalty offer sequencing, menu placement in the ordering app, drive-thru upsell language, and new-market launch digital flows — with statistical significance built in."},
+      {icon:'🎥', title:'Session Replay', body:"Replace Hotjar with replays tied to Perks member IDs. When a loyalty member drops off before redeeming, replay their exact session with their ordering history as context."},
+      {icon:'📊', title:'Analytics', body:"Build behavioral cohorts on 2.1M Perks members — cohort by visit frequency, badge tier, market, and order channel. Understand what drives a first-timer to become a Top Dog."},
     ],
-    whyNow: [
-      "Brett Patterson joined as President & CEO on February 23, 2026 — just 8 weeks ago. New CEOs at public restaurant chains almost universally audit their digital and data stack in the first 90 days. Patterson comes from Miller's Ale House and Bloomin' Brands where operational and data-driven excellence defined his tenure. The window to get in front of the data conversation before the new CEO's priorities calcify is right now.",
-      "Denise Lauer joined as CMO in September 2025, 7 months ago. She directly owns brand, advertising, design, digital, loyalty, social media, and field marketing — which means she owns the Portillo's Perks program, its analytics, and its outcomes. Lauer built her career at Marco's Pizza, Morton Salt, and PepsiCo's Quaker Foods on data-driven brand modernization. She joined to grow Perks beyond a 'surprise and delight' mechanic into a real retention engine — and she will want the analytics infrastructure to prove it's working.",
-      "Portillo's Perks is exactly one year old and the numbers are compelling (2.1M members, >10% of sales) — but publicly traded companies face quarterly scrutiny. When analysts start pressing on whether Perks is actually driving incremental frequency or just formalizing behavior that would have happened anyway, the marketing and finance team will need a behavioral analytics answer. Right now, they don't have one. That's the gap Amplitude fills — and this is the exact inflection point where the conversation lands.",
+    whyNow:[
+      "Brett Patterson joined as President and CEO on February 23, 2026 — just 8 weeks ago. New CEOs at public restaurant chains almost universally audit their digital and data stack in the first 90 days. Patterson comes from Miller's Ale House and Bloomin' Brands where operational and data-driven excellence defined his tenure. The window to get in front of the data conversation before priorities calcify is right now.",
+      "Denise Lauer joined as CMO in September 2025, 7 months ago. She directly owns brand, advertising, design, digital, loyalty, social media, and field marketing — which means she owns the Portillo's Perks program, its analytics, and its outcomes. She joined to grow Perks beyond a 'surprise and delight' mechanic into a real retention engine — and will want the analytics infrastructure to prove it's working.",
+      "Portillo's Perks is exactly one year old with compelling numbers (2.1M members, >10% of sales) — but publicly traded companies face quarterly scrutiny. When analysts start pressing on whether Perks is driving incremental frequency or just formalizing behavior that would have happened anyway, the marketing and finance team will need a behavioral analytics answer. Right now, they don't have one. That's the gap Amplitude fills.",
     ],
-    products_detail: [
-      { name: 'Experiment', desc: "Portillo's is expanding via their 'Restaurant of the Future' smaller-format stores into new markets. Experiment gives them the ability to test digital ordering flows, loyalty offer structures, and upsell placements market-by-market — with proper statistical controls — so expansion decisions are data-driven, not intuition-driven. Estimated ACV: $60K–$120K (Enterprise tier)." },
-      { name: 'Session Replay', desc: "Hotjar is confirmed in their privacy policy — they're already paying for session replay. Amplitude Session Replay is the consolidation play: replays are natively tied to Amplitude events, which means you can filter sessions by 'Perks members who saw an offer but didn't redeem' and watch exactly what happened. Estimated ACV: $48K–$96K (Hotjar displacement savings offset cost). " },
-      { name: 'Analytics', desc: "2.1M loyalty members. Each member generates visit frequency, order composition, channel preference, and badge progression data. Today that data powers rewards — it doesn't power insight. Amplitude Analytics turns the Perks data layer into a behavioral intelligence engine: cohort analysis, funnel analysis, retention curves, all self-serve for Denise's team. Estimated ACV: $150K–$300K (Enterprise tier)." },
+    products_detail:[
+      {name:'Experiment', desc:"A/B test loyalty offer sequencing, menu placement in the ordering app, drive-thru upsell language, and new-market launch digital flows. Estimated ACV: $60K–$120K (Enterprise tier)."},
+      {name:'Session Replay', desc:"Hotjar is confirmed in their privacy policy — this is a consolidation play. Replays are natively tied to Amplitude events: filter sessions by 'Perks members who saw an offer but didn't redeem' and watch exactly what happened. Estimated ACV: $48K–$96K (Hotjar displacement offsets cost)."},
+      {name:'Analytics', desc:"2.1M loyalty members generating behavioral data across channels. Amplitude Analytics turns the Perks data layer into a behavioral intelligence engine: cohort analysis, funnel analysis, retention curves, all self-serve for Denise's team. Estimated ACV: $150K–$300K (Enterprise tier)."},
     ],
-    contacts: [
-      {
-        name: 'Denise Lauer',
-        title: 'Chief Marketing Officer',
-        signal: 'Economic Buyer',
-        signalColor: C.orange,
-        why: "Joined September 2025. Owns brand, digital, loyalty, social — she owns Portillo's Perks and its outcomes. Built her career on data-driven brand growth at Marco's Pizza and Morton Salt. She will be the one who decides if Perks needs an analytics infrastructure upgrade.",
-        messaging: "Denise, Portillo's Perks going from zero to 2.1M members in under a year is genuinely impressive. The question I keep coming back to: when you're in a board meeting and someone asks whether Perks is driving incremental frequency or just rewarding people who were already coming — what's your answer today? Most loyalty platforms give you member counts and redemption rates. Amplitude gives you behavioral cohort analysis that answers whether the program is actually changing behavior.",
-        channel: 'LinkedIn',
-        tip: 'linkedin.com/in/search: "Denise Lauer" Portillo\'s — verified in ZoomInfo with email (accuracy 98)',
-      },
-      {
-        name: 'Keith Correia',
-        title: 'Chief Information Officer',
-        signal: 'Champion',
-        signalColor: C.purple,
-        why: "Joined April 2024. At Steak 'n Shake, he built a 'marketing personalization platform' from scratch — he already understands what behavioral analytics infrastructure needs to look like. He's the person who knows what's missing at Portillo's before anyone else does.",
-        messaging: "Keith, I noticed you built Steak 'n Shake's marketing personalization platform — which means you've already solved this problem once. At Portillo's, with 2.1M Perks members generating behavioral data across every channel, I'd imagine the question of how to build an analytics layer on top of that loyalty data has come up. Amplitude integrates with Olo directly, so there's no re-instrumentation — just a behavioral intelligence layer on top of what you've already built.",
-        channel: 'LinkedIn',
-        tip: 'ZoomInfo confirmed CIO at Portillo\'s since April 2024. Accuracy score: 92.',
-      },
-      {
-        name: 'Brett Patterson',
-        title: 'President & CEO',
-        signal: 'Exec Sponsor',
-        signalColor: C.blue,
-        why: "Joined February 23, 2026 — 8 weeks ago. New CEOs in their first 90 days are auditing everything. Patterson's mandate is market positioning, new restaurant growth, and operational excellence. Amplitude gives him the behavioral data layer to make all three data-driven.",
-        messaging: "Brett, congratulations on joining Portillo's — operationally you're walking into a brand with real momentum. One thing worth a quick conversation: as you expand the Restaurant of the Future format into new markets, the digital ordering and loyalty experience in those markets will make or break unit economics early on. Most restaurant brands at your scale are flying blind on which digital experiences convert new-market guests. Worth 20 minutes to show you what behavioral analytics looks like when it's built on top of a loyalty program like Perks.",
-        channel: 'Email',
-        tip: 'New as of Feb 23, 2026. Lead with new-market expansion angle, not analytics. He\'s still in listening mode.',
-      },
-      {
-        name: 'Michelle Hook',
-        title: 'Chief Financial Officer',
-        signal: 'Economic Buyer',
-        signalColor: C.orange,
-        why: "Former Domino's VP of Finance where she led 'strategic finance analytics' and 'Domino's technology.' She knows what good digital analytics infrastructure looks like and what it takes to justify the investment to the board.",
-        messaging: "Michelle, your background at Domino's — especially leading finance analytics and their technology team — means you've probably seen what happens when loyalty data and behavioral analytics are connected versus when they're siloed. With Perks at 2.1M members and 10%+ of sales, the board is going to start asking for incrementality data. Amplitude is the infrastructure that makes that question answerable without a custom data science build.",
-        channel: 'Email',
-        tip: 'ZoomInfo confirmed CFO, accuracy 90. Has email listed. Lead with ROI/incrementality framing.',
-      },
-      {
-        name: 'Garrett Kern',
-        title: 'VP, Strategy & Culinary',
-        signal: 'Stakeholder',
-        signalColor: C.blue,
-        why: "Former Bain consultant, owns strategy and culinary direction. He's the one synthesizing 'market trends, data, and qualitative insight' for Portillo's growth decisions — which means he's the one frustrated by the lack of behavioral data when the board asks about new market performance.",
-        messaging: "Garrett, your Bain background means you've seen what good data-driven strategy looks like — and probably noticed what's missing when the data isn't there. As Portillo's pushes into new markets with the smaller Restaurant of the Future format, the digital experience data is going to be the leading indicator of whether a market is working before the financial data catches up. Amplitude connects Perks behavioral data to that question. Worth a conversation.",
-        channel: 'LinkedIn',
-        tip: 'Find via LinkedIn: "Garrett Kern" Portillo\'s. Listed as VP Strategy & Culinary on investor relations page.',
-      },
+    contacts:[
+      {name:'Denise Lauer', signal:'Economic Buyer', signalColor:C.orange, why:"CMO since Sept 2025. Owns brand, digital, loyalty, social — she owns Portillo's Perks and its outcomes. Built her career on data-driven brand growth at Marco's Pizza and Morton Salt.", messaging:"Denise, Portillo's Perks going from zero to 2.1M members in under a year is genuinely impressive. The question I keep coming back to: when you're in a board meeting and someone asks whether Perks is driving incremental frequency or just rewarding people who were already coming — what's your answer today? Most loyalty platforms give you member counts and redemption rates. Amplitude gives you behavioral cohort analysis that answers whether the program is actually changing behavior.", channel:'LinkedIn', tip:"Search: 'Denise Lauer Portillo's' — ZoomInfo confirmed CMO (accuracy 98). Also confirmed on investor relations page."},
+      {name:'Keith Correia', signal:'Champion', signalColor:C.purple, why:"CIO since April 2024. At Steak 'n Shake, he built a marketing personalization platform from scratch — he already understands what behavioral analytics infrastructure needs to look like. Highest-probability champion.", messaging:"Keith, I noticed you built Steak 'n Shake's marketing personalization platform — which means you've already solved this problem once. At Portillo's, with 2.1M Perks members generating behavioral data across every channel, I'd imagine the question of how to build an analytics layer on top of that loyalty data has come up. Amplitude integrates with Olo directly, so there's no re-instrumentation — just a behavioral intelligence layer on top of what you've already built.", channel:'LinkedIn', tip:"ZoomInfo confirmed CIO at Portillo's since April 2024. Accuracy score: 92."},
+      {name:'Brett Patterson', signal:'Exec Sponsor', signalColor:C.blue, why:"President and CEO since February 23, 2026 — 8 weeks ago. New CEOs in their first 90 days are auditing everything. Patterson's mandate is market positioning, new restaurant growth, and operational excellence.", messaging:"Brett, congratulations on joining Portillo's — operationally you're walking into a brand with real momentum. As you expand the Restaurant of the Future format into new markets, the digital ordering and loyalty experience in those markets will make or break unit economics early on. Most restaurant brands at your scale are flying blind on which digital experiences convert new-market guests. Worth 20 minutes to show you what behavioral analytics looks like when it's built on top of a loyalty program like Perks.", channel:'Email', tip:"New as of Feb 23, 2026. Lead with new-market expansion angle, not analytics. He's still in listening mode."},
+      {name:'Michelle Hook', signal:'Economic Buyer', signalColor:C.orange, why:"CFO. Former Domino's VP of Finance leading strategic finance analytics and Domino's technology. She knows what good digital analytics infrastructure looks like and how to justify the investment to the board.", messaging:"Michelle, your background at Domino's — especially leading finance analytics and their technology team — means you've probably seen what happens when loyalty data and behavioral analytics are connected versus siloed. With Perks at 2.1M members and 10%+ of sales, the board is going to start asking for incrementality data. Amplitude is the infrastructure that makes that question answerable without a custom data science build.", channel:'Email', tip:"ZoomInfo confirmed CFO, accuracy 90. Lead with ROI/incrementality framing."},
     ],
-    tasks: [
-      {
-        id: 'portillos-1',
-        title: '🟠 Priority: LinkedIn DM to Denise Lauer (CMO)',
-        description: 'New CMO, 7 months in, owns Perks + digital. Lead with loyalty analytics gap: "When the board asks whether Perks is driving incremental frequency — what\'s your answer today?" Keep it under 3 sentences. No deck, no CTA to book a call yet.',
-        channel: 'LinkedIn',
-        due: addDays(1),
-      },
-      {
-        id: 'portillos-2',
-        title: '🟣 Champion outreach: LinkedIn DM to Keith Correia (CIO)',
-        description: 'He built a personalization platform at Steak \'n Shake — he already knows what\'s missing. Lead with the Olo integration angle: "No re-instrumentation needed." Reference his prior work explicitly — that\'s what makes this not feel like a template.',
-        channel: 'LinkedIn',
-        due: addDays(2),
-      },
-      {
-        id: 'portillos-3',
-        title: '📧 Email to Brett Patterson (CEO — 8 weeks in)',
-        description: 'New CEO audit window. Lead with new-market expansion performance, not analytics pitch. Subject line idea: "One data gap that typically bites restaurant brands in new markets." Keep to 4 sentences. No attachment. Goal = one reply.',
-        channel: 'Email',
-        due: addDays(2),
-      },
-      {
-        id: 'portillos-4',
-        title: '🔍 Internal: Check with #alliances — any Olo partner overlap?',
-        description: 'Olo powers Portillo\'s ordering layer. If Amplitude has an Olo technology partnership, that\'s a warm intro path that bypasses cold outreach entirely. Post in Slack #alliances: "Anyone own the Olo partnership? Portillo\'s uses them for ordering." Get the name before you go cold.',
-        channel: 'Partner',
-        due: addDays(5),
-      },
+    tasks:[
+      {id:'portillos-1', title:'LinkedIn DM to Denise Lauer (CMO)', description:"New CMO, 7 months in, owns Perks + digital. Lead with loyalty analytics gap: 'When the board asks whether Perks is driving incremental frequency — what's your answer today?' Keep it under 3 sentences. No deck, no CTA to book a call yet.", channel:'LinkedIn', due:addDays(1)},
+      {id:'portillos-2', title:'LinkedIn DM to Keith Correia (CIO)', description:"He built a personalization platform at Steak 'n Shake — he already knows what's missing. Lead with the Olo integration angle: 'No re-instrumentation needed.' Reference his prior work explicitly — that's what makes this feel researched.", channel:'LinkedIn', due:addDays(2)},
+      {id:'portillos-3', title:'Email to Brett Patterson (CEO)', description:"New CEO audit window. Lead with new-market expansion performance, not analytics pitch. Subject: 'One data gap that typically bites restaurant brands in new markets.' Keep to 4 sentences. No attachment. Goal = one reply.", channel:'Email', due:addDays(2)},
+      {id:'portillos-4', title:'Check #alliances — Olo partner overlap?', description:"Olo powers Portillo's ordering layer. Post in Slack #alliances: 'Anyone own the Olo partnership? Portillo's uses them for ordering.' Get the name before going cold.", channel:'Partner', due:addDays(5)},
     ],
-  }
+  },
 };
-
-// ─── Components ───────────────────────────────────────────────────────────────
-
-function Badge({ label, color = C.orange, textColor = C.white, small = false }) {
-  return (
-    <span style={{
-      display: 'inline-block',
-      background: color,
-      color: textColor,
-      borderRadius: 999,
-      padding: small ? '2px 8px' : '4px 12px',
-      fontSize: small ? 11 : 12,
-      fontWeight: 600,
-      letterSpacing: '0.02em',
-    }}>
-      {label}
-    </span>
-  );
-}
-
-function ChannelBadge({ channel }) {
-  const map = {
-    LinkedIn:  { bg: '#0A66C2', label: 'LinkedIn' },
-    Email:     { bg: '#6B6B6B', label: 'Email' },
-    Outreach:  { bg: C.orange,  label: 'Outreach' },
-    Partner:   { bg: C.purple,  label: 'Partner' },
-    Phone:     { bg: C.green,   label: 'Phone' },
-    Text:      { bg: C.amber,   label: 'Text' },
-  };
-  const { bg, label } = map[channel] || { bg: '#ccc', label: channel };
-  return <Badge label={label} color={bg} small />;
-}
-
-function ConfidenceBadge({ confidence }) {
-  const map = {
-    confirmed:     { bg: C.green,  label: 'Confirmed' },
-    likely:        { bg: C.amber,  label: 'Likely' },
-    'signal only': { bg: '#ccc',   label: 'Signal Only' },
-  };
-  const { bg, label } = map[confidence] || { bg: '#ccc', label: confidence };
-  return <Badge label={label} color={bg} small />;
-}
-
-function Section({ title, children, style = {} }) {
-  return (
-    <div style={{ marginBottom: 32, ...style }}>
-      {title && (
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.textMuted, marginBottom: 12 }}>
-          {title}
-        </div>
-      )}
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const Badge = ({text,color=C.orange,bg}) => (
+  <span style={{background:bg||color+'18',color,border:`1px solid ${color}33`,borderRadius:20,padding:'3px 12px',fontSize:11,fontWeight:700,letterSpacing:'0.5px',textTransform:'uppercase',whiteSpace:'nowrap'}}>
+    {text}
+  </span>
+);
+const ChannelBadge = ({ch}) => {
+  const map={LinkedIn:{bg:'#0A66C2',label:'LinkedIn'},Email:{bg:'#6B7280',label:'Email'},Phone:{bg:'#059669',label:'Phone'},Outreach:{bg:C.orange,label:'Outreach'},Partner:{bg:C.purple,label:'Partner Intro'},Text:{bg:'#374151',label:'Text'}};
+  const s=map[ch]||{bg:C.grayMid,label:ch};
+  return <span style={{background:s.bg,color:'#fff',borderRadius:4,padding:'2px 8px',fontSize:11,fontWeight:700}}>{s.label}</span>;
+};
+const ConfidenceBadge = ({level}) => {
+  const map={confirmed:{color:C.green,label:'Confirmed'},likely:{color:C.amber,label:'Likely'},'signal only':{color:C.textMuted,label:'Signal Only'}};
+  const s=map[level]||{color:C.textMuted,label:level};
+  return <span style={{color:s.color,fontSize:11,fontWeight:700,border:`1px solid ${s.color}44`,borderRadius:4,padding:'2px 8px'}}>{s.label}</span>;
+};
+const Section = ({title,children,bg=C.white}) => (
+  <div style={{background:bg,padding:'56px 0'}}>
+    <div style={{maxWidth:900,margin:'0 auto',padding:'0 32px'}}>
+      {title && <div style={{fontSize:12,fontWeight:700,letterSpacing:'1.5px',textTransform:'uppercase',color:C.orange,marginBottom:28}}>{title}</div>}
       {children}
     </div>
-  );
-}
-
-function ContactCard({ contact }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div style={{
-      background: C.white,
-      border: `1px solid ${C.border}`,
-      borderRadius: 10,
-      marginBottom: 12,
-      overflow: 'hidden',
-    }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{
-          width: '100%',
-          padding: '14px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'none',
-          textAlign: 'left',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 38, height: 38, borderRadius: '50%',
-            background: contact.signalColor,
-            color: C.white,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 700, fontSize: 15,
-          }}>
-            {contact.name.charAt(0)}
-          </div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: 14 }}>{contact.name}</div>
-            <div style={{ fontSize: 12, color: C.textMuted }}>{contact.title}</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Badge label={contact.signal} color={contact.signalColor} small />
-          <ChannelBadge channel={contact.channel} />
-          <span style={{ color: C.textMuted, fontSize: 18 }}>{open ? '▲' : '▼'}</span>
-        </div>
-      </button>
-      {open && (
-        <div style={{ padding: '0 16px 16px', borderTop: `1px solid ${C.border}` }}>
-          <div style={{ padding: '12px 0', fontSize: 13, color: '#333', lineHeight: 1.6 }}>
-            <strong>Why they matter:</strong> {contact.why}
-          </div>
-          <div style={{
-            background: '#FFF8F3',
-            border: `1px solid ${C.orange}30`,
-            borderLeft: `3px solid ${C.orange}`,
-            borderRadius: 6,
-            padding: 12,
-            marginBottom: 12,
-          }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: C.orange, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Messaging POV</div>
-            <div style={{ fontSize: 13, lineHeight: 1.65, color: '#222' }}>"{contact.messaging}"</div>
-          </div>
-          <div style={{ fontSize: 12, color: C.textMuted }}>
-            <strong>Search tip:</strong> {contact.tip}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function TaskList({ accountId, tasks }) {
+  </div>
+);
+// ─── TASK LIST ───────────────────────────────────────────────────────────────
+function TaskList({accountId,tasks}) {
   const key = `amp_tasks_${accountId}`;
-  const [done, setDone] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(key)) || {}; } catch { return {}; }
+  const [done,setDone] = useState(() => {
+    try{return JSON.parse(localStorage.getItem(key))||{};}catch{return {};}
   });
-
-  const toggle = (id) => {
+  const toggle = id => {
     setDone(prev => {
-      const next = { ...prev, [id]: !prev[id] };
-      try { localStorage.setItem(key, JSON.stringify(next)); } catch {}
+      const next = {...prev,[id]:!prev[id]};
+      localStorage.setItem(key,JSON.stringify(next));
       return next;
     });
   };
-
-  const pending = tasks.filter(t => !done[t.id]);
-  const completed = tasks.filter(t => done[t.id]);
-
+  const pending = tasks.filter(t=>!done[t.id]);
+  const completed = tasks.filter(t=>done[t.id]);
+  const TaskRow = ({t}) => {
+    const over = !done[t.id] && isOverdue(t.due);
+    return (
+      <div style={{display:'flex',gap:14,alignItems:'flex-start',padding:'16px 0',borderBottom:`1px solid ${C.border}`,opacity:done[t.id]?0.5:1}}>
+        <input type="checkbox" checked={!!done[t.id]} onChange={()=>toggle(t.id)} style={{marginTop:3}}/>
+        <div style={{flex:1}}>
+          <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',marginBottom:4}}>
+            <span style={{fontSize:15,fontWeight:done[t.id]?400:600,color:C.dark,textDecoration:done[t.id]?'line-through':'none'}}>{t.title}</span>
+            <ChannelBadge ch={t.channel}/>
+            {over && <span style={{fontSize:11,fontWeight:700,color:C.red}}>OVERDUE</span>}
+          </div>
+          <div style={{fontSize:13,color:C.textMuted,lineHeight:1.5,marginBottom:4}}>{t.description}</div>
+          <div style={{fontSize:11,color:over&&!done[t.id]?C.amber:C.textMuted}}>Due {fmt(t.due)}</div>
+        </div>
+      </div>
+    );
+  };
   return (
     <div>
-      {pending.length > 0 && (
-        <Section title={`Pending (${pending.length})`}>
-          {pending.map(t => (
-            <div key={t.id} style={{
-              background: C.white,
-              border: `1px solid ${isOverdue(t.due) ? C.red : C.border}`,
-              borderRadius: 10,
-              padding: 14,
-              marginBottom: 10,
-              display: 'flex',
-              gap: 12,
-            }}>
-              <input
-                type="checkbox"
-                checked={false}
-                onChange={() => toggle(t.id)}
-                style={{ marginTop: 3, accentColor: C.orange, width: 16, height: 16, cursor: 'pointer', flexShrink: 0 }}
-              />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{t.title}</div>
-                <div style={{ fontSize: 13, color: '#444', lineHeight: 1.6, marginBottom: 8 }}>{t.description}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <ChannelBadge channel={t.channel} />
-                  <span style={{ fontSize: 11, color: isOverdue(t.due) ? C.red : C.textMuted, fontWeight: isOverdue(t.due) ? 700 : 400 }}>
-                    Due: {fmtDate(t.due)}{isOverdue(t.due) ? ' — OVERDUE' : ''}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </Section>
+      {pending.length===0 && completed.length>0 && (
+        <div style={{textAlign:'center',padding:'32px',color:C.green,fontWeight:700,fontSize:16}}>✅ All tasks complete</div>
       )}
-      {completed.length > 0 && (
-        <Section title={`Completed (${completed.length})`}>
-          {completed.map(t => (
-            <div key={t.id} style={{
-              background: '#F0FFF4',
-              border: `1px solid ${C.green}40`,
-              borderRadius: 10,
-              padding: 14,
-              marginBottom: 10,
-              display: 'flex',
-              gap: 12,
-              opacity: 0.7,
-            }}>
-              <input
-                type="checkbox"
-                checked={true}
-                onChange={() => toggle(t.id)}
-                style={{ marginTop: 3, accentColor: C.green, width: 16, height: 16, cursor: 'pointer', flexShrink: 0 }}
-              />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, textDecoration: 'line-through', color: C.textMuted }}>{t.title}</div>
-                <div style={{ fontSize: 11, color: C.textMuted, marginTop: 4 }}>
-                  <ChannelBadge channel={t.channel} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </Section>
+      {pending.map(t=><TaskRow key={t.id} t={t}/>)}
+      {completed.length>0 && pending.length>0 && (
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:'1px',color:C.textMuted,textTransform:'uppercase',margin:'20px 0 8px'}}>Completed</div>
       )}
-      {tasks.length === 0 && (
-        <div style={{ color: C.textMuted, fontSize: 14 }}>No tasks defined for this account.</div>
-      )}
+      {completed.map(t=><TaskRow key={t.id} t={t}/>)}
     </div>
   );
 }
-
-function DiscoveryQuestions({ questions }) {
+// ─── CONTACTS ────────────────────────────────────────────────────────────────
+function ContactCard({c}) {
+  const [open,setOpen]=useState(false);
   return (
-    <div>
-      {questions.map((q, i) => (
-        <div key={i} style={{
-          background: C.white,
-          border: `1px solid ${C.border}`,
-          borderRadius: 10,
-          padding: 16,
-          marginBottom: 12,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <ChannelBadge channel={q.channel} />
-            <span style={{ fontSize: 12, fontWeight: 700, color: C.textMuted }}>{q.gap}</span>
+    <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:12,padding:20,marginBottom:12}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',cursor:'pointer'}} onClick={()=>setOpen(!open)}>
+        <div>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
+            <span style={{fontWeight:700,fontSize:15,color:C.dark}}>{c.name}</span>
+            <Badge text={c.signal} color={c.signalColor}/>
           </div>
-          <div style={{ fontSize: 13, lineHeight: 1.65, color: '#222', marginBottom: 8, fontStyle: 'italic' }}>
-            "{q.message}"
-          </div>
-          <div style={{ fontSize: 12, color: C.textMuted }}>
-            <strong style={{ color: C.orange }}>Why it works:</strong> {q.why}
+          <div style={{fontSize:13,color:C.textMuted,marginBottom:6}}>{c.why}</div>
+          <div style={{display:'flex',gap:8,alignItems:'center'}}>
+            <ChannelBadge ch={c.channel}/>
+            <span style={{fontSize:11,color:C.textMuted}}>{c.tip}</span>
           </div>
         </div>
-      ))}
-    </div>
-  );
-}
-
-const DISCOVERY_QUESTIONS = [
-  {
-    channel: 'Email',
-    gap: 'Loyalty data without analytics',
-    message: "When a Perks member visits twice a month instead of once, do you know today what you did — or what they experienced digitally — that drove that behavior change? That question is where most loyalty programs hit a wall, and it's exactly where Amplitude sits on top of a program like Perks.",
-    why: "Opens with a specific behavioral question that exposes the analytics gap without saying 'you don't have analytics.' It forces a yes/no answer that leads to a discovery call.",
-  },
-  {
-    channel: 'Email',
-    gap: 'Hotjar displacement / session replay consolidation',
-    message: "Portillo's privacy policy lists Hotjar for session replay — which tells me you're already investing in understanding how guests interact with your digital experience. The gap Hotjar creates is that those sessions are disconnected from your Perks member IDs. When a loyalty member drops off before redeeming an offer, you can't replay their session with their ordering history attached. That's what we're solving.",
-    why: "References a real signal (privacy policy). Shows research. Frames Hotjar as a gap, not a comparison — avoids a defensive reaction.",
-  },
-  {
-    channel: 'LinkedIn',
-    gap: 'New CMO priorities — loyalty analytics',
-    message: "Denise — the Perks program scaling to 2.1M members in under a year is a real achievement. I'm curious: as you think about what Perks needs to be in year two, is the priority more acquisition (driving new signups) or is it retention analytics (understanding what keeps top members coming back)? The answer usually changes what infrastructure you need.",
-    why: "Peer-to-peer tone. Doesn't pitch. Asks a strategic question that Denise genuinely needs to answer anyway — and positions Amplitude as the next conversation, not the first ask.",
-  },
-  {
-    channel: 'LinkedIn',
-    gap: 'CIO champion — Olo integration angle',
-    message: "Keith — I see you built Steak 'n Shake's personalization platform from the ground up, so you've already solved the hard part once. At Portillo's, with Olo powering orders and Perks generating behavioral signals, I'm guessing the question of how to put an analytics layer on top of that has come up. Amplitude integrates natively with Olo — no re-instrumentation. Worth a 20-minute conversation?",
-    why: "References his specific prior work at Steak 'n Shake — this is the single line that makes him stop scrolling. The Olo integration removes the 'we'd have to rebuild instrumentation' objection before he can raise it.",
-  },
-  {
-    channel: 'Phone',
-    gap: 'New market expansion — digital experience performance',
-    message: "Hi Keith, this is [Name] from Amplitude — I'm calling specifically about the Restaurant of the Future expansion. As you open smaller-format stores in new markets, the digital ordering experience is going to be your leading indicator of whether a market is working — before the financial data catches up. Amplitude is how you instrument that. Worth 20 minutes to walk through what that looks like on top of your Olo + Perks stack? My number is [number].",
-    why: "Specific to their announced expansion strategy. The 'leading indicator before financials catch up' framing is exactly what a CIO building new-market tech needs to hear. Ends with a concrete reason to call back.",
-  },
-  {
-    channel: 'Phone',
-    gap: 'Session replay — loyalty funnel drop-offs',
-    message: "Hi Denise, this is [Name] from Amplitude — quick one. You're using Hotjar today for session replay, but those sessions aren't connected to your Perks member IDs. When a Top Dog member drops off before redeeming, you can't watch what happened. I want to show you what that looks like when it's fixed. Ten minutes this week?",
-    why: "References Hotjar by name (demonstrates research). Frames the gap as a loyalty-specific problem Denise directly owns. Short, punchy, ends with a low-commitment ask.",
-  },
-  {
-    channel: 'Text',
-    gap: 'Follow-up after LinkedIn or email contact',
-    message: "Hey Denise — sent you a note on LinkedIn about Perks analytics. Quick question: is understanding member frequency cohorts on your roadmap for 2026, or is the focus elsewhere right now?",
-    why: "Ultra-concise. The frequency cohort question is specific enough to show expertise, but open enough to get a real answer. Works as a follow-up to prior outreach.",
-  },
-  {
-    channel: 'Text',
-    gap: 'Follow-up to CIO after voicemail',
-    message: "Keith — left you a voicemail about Amplitude + Olo. Specifically wanted to show you the Olo event integration — no re-instrumentation on your side. Worth a look this week?",
-    why: "Assumes he heard the voicemail. Leads with the thing he cares about (no rework on his team). The 'worth a look' framing is low-commitment and easy to say yes to.",
-  },
-];
-
-function MEDDICC({ account }) {
-  const rows = [
-    { key: 'Metrics', known: 'Loyalty member frequency, digital order rate, new-market digital engagement, Perks redemption conversion', validate: 'Confirm which metrics Denise and the board are actually tracking against Perks targets' },
-    { key: 'Economic Buyer', known: 'Denise Lauer (CMO — owns Perks + digital); Keith Correia (CIO — owns tech stack)', validate: 'Confirm whether a dedicated VP/Director of Digital or Data has authority on this decision' },
-    { key: 'Decision Criteria', known: 'Olo integration depth, ease of self-serve analytics for marketing team, behavioral data depth beyond GA4, privacy compliance (they\'re rigorous on cookie/data policy)', validate: 'Validate with champion in first discovery call' },
-    { key: 'Decision Process', known: 'Unknown — public company so likely requires IT and procurement sign-off', validate: 'Confirm in first meeting: "Who else needs to be part of evaluating a change to your analytics stack?"' },
-    { key: 'Identify Pain', known: 'Loyalty data with no analytics layer; Hotjar disconnected from member IDs; no experimentation platform; new-market expansion with no digital performance data', validate: 'Confirm with Keith or Denise that this is actively felt, not just hypothetical' },
-    { key: 'Champion', known: 'Keith Correia (CIO) — highest probability; built personalization platform at Steak \'n Shake, understands the gap', validate: 'Need to run a discovery call and confirm internal advocacy potential' },
-    { key: 'Competition', known: 'Hotjar (confirmed, active); Google Analytics GA4 (confirmed, active); no experimentation tool detected', validate: 'Ask in discovery: "Have you evaluated any analytics platforms for the loyalty data?"' },
-  ];
-  return (
-    <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 10, overflow: 'hidden' }}>
-      {rows.map((r, i) => (
-        <div key={r.key} style={{
-          padding: '14px 16px',
-          borderBottom: i < rows.length - 1 ? `1px solid ${C.border}` : 'none',
-          display: 'grid',
-          gridTemplateColumns: '120px 1fr 1fr',
-          gap: 16,
-          alignItems: 'start',
-        }}>
-          <div style={{ fontWeight: 700, fontSize: 13, color: C.orange }}>{r.key}</div>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: C.textMuted, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Known</div>
-            <div style={{ fontSize: 13, color: '#333', lineHeight: 1.5 }}>{r.known}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: C.textMuted, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>To Validate</div>
-            <div style={{ fontSize: 13, color: '#555', lineHeight: 1.5, fontStyle: 'italic' }}>{r.validate}</div>
-          </div>
+        <span style={{color:C.textMuted,fontSize:18,marginLeft:12,flexShrink:0}}>{open?'▲':'▼'}</span>
+      </div>
+      {open && (
+        <div style={{marginTop:16,background:C.orange+'08',border:`1px solid ${C.orange}22`,borderRadius:8,padding:16}}>
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:C.orange,marginBottom:8}}>Messaging POV</div>
+          <div style={{fontSize:14,color:C.dark,lineHeight:1.65}}>{c.messaging}</div>
         </div>
-      ))}
+      )}
     </div>
   );
 }
-
-function PartnerSection() {
+// ─── ACCOUNT PAGE ────────────────────────────────────────────────────────────
+function AccountPage({acct}) {
+  const [tab,setTab]=useState('brief');
+  const tabStyle = active => ({
+    background:active?C.orange:'transparent',
+    color:active?C.white:C.textMuted,
+    border:`1px solid ${active?C.orange:C.border}`,
+  });
   return (
-    <div style={{ background: '#F3F0FF', border: `1px solid ${C.purple}30`, borderRadius: 10, padding: 16 }}>
-      <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>🤝 Partner Intel</div>
-      <div style={{ fontSize: 13, lineHeight: 1.65, marginBottom: 12 }}>
-        <strong>Google Analytics → Looker/Google partner path</strong> (Confidence: confirmed)<br/>
-        GA4 is confirmed in Portillo's stack. Amplitude integrates with Looker/Google. The Google Cloud partner team may have an existing relationship with Portillo's technical buyers — worth a Glean search for the Amplitude partner contact who owns the Google relationship.
+    <div style={{fontFamily:'system-ui,-apple-system,sans-serif',color:C.dark}}>
+      {/* Net-New banner */}
+      <div style={{background:'#FF6B00',padding:'10px 32px',display:'flex',alignItems:'center',gap:10}}>
+        <span style={{fontSize:13,fontWeight:800,color:'#fff',letterSpacing:'0.3px'}}>🎯 Net-New Prospect</span>
+        <span style={{color:'#fff',opacity:0.6,fontSize:13}}>—</span>
+        <span style={{fontSize:13,color:'#fff',opacity:0.9}}>No existing relationship in Salesforce. First-touch outreach only.</span>
       </div>
-      <div style={{ fontSize: 13, lineHeight: 1.65, marginBottom: 12 }}>
-        <strong>Olo → potential tech partnership</strong> (Confidence: likely)<br/>
-        Olo powers Portillo's ordering layer and is a natural Amplitude integration partner. Check <code>#alliances</code> or <code>#partnerships</code> in Slack to confirm if Amplitude has a formalized Olo partnership. If yes, the Olo AE assigned to Portillo's is your warmest intro path.
-      </div>
-      <div style={{ background: C.white, borderRadius: 6, padding: 10, fontSize: 12, color: C.textMuted }}>
-        <strong>Recommended first move:</strong> Post in <code>#alliances</code>: "Anyone own the Olo partnership? Portillo's uses them for ordering + loyalty. Want to explore a warm intro." Do this before any cold outreach — a partner intro skips the gatekeeper entirely.
-      </div>
-    </div>
-  );
-}
-
-function AccountPage({ account, onBack }) {
-  const [tab, setTab] = useState('brief');
-  const pendingCount = account.tasks.filter(t => {
-    try { const d = JSON.parse(localStorage.getItem(`amp_tasks_${account.id}`)) || {}; return !d[t.id]; } catch { return true; }
-  }).length;
-
-  const tabs = [
-    { id: 'brief', label: 'Full Brief' },
-    { id: 'tasks', label: `Tasks (${pendingCount})` },
-    { id: 'questions', label: 'Discovery (8)' },
-    { id: 'meddicc', label: 'MEDDICC' },
-    { id: 'onepager', label: 'One-Pager' },
-  ];
-
-  return (
-    <div>
       {/* Hero */}
-      <div style={{ background: account.domain ? `linear-gradient(135deg, #0D0D0D 0%, #1a1a1a 100%)` : C.dark, position: 'relative', overflow: 'hidden' }}>
-        {/* Net-New Banner */}
-        <div style={{ background: C.orange, padding: '8px 24px', fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.white, textAlign: 'center' }}>
-          ✅ Net-New Prospect — No Existing Customer Relationship · Confirmed in Salesforce
-        </div>
-        <div style={{ padding: '32px 32px 28px', position: 'relative', zIndex: 1 }}>
-          {/* Back + Logo Row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
-            <button onClick={onBack} style={{ color: C.white, opacity: 0.7, fontSize: 14, display: 'flex', alignItems: 'center', gap: 6 }}>← Back</button>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
-            <img
-              src={`https://logo.clearbit.com/${account.domain}`}
-              alt={account.name}
-              style={{ width: 48, height: 48, borderRadius: 10, background: C.white, objectFit: 'contain', padding: 4 }}
-              onError={e => { e.target.style.display = 'none'; }}
-            />
-            <div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: C.white }}>{account.name}</div>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>{account.industry} · NASDAQ: PTLO · Oak Brook, IL</div>
+      <div style={{background:C.dark,padding:'64px 32px 56px',position:'relative',overflow:'hidden'}}>
+        {/* Logo watermark */}
+        <img
+          src={`https://logo.clearbit.com/${acct.domain}`}
+          alt=""
+          onError={e=>e.target.style.display='none'}
+          style={{position:'absolute',right:48,top:'50%',transform:'translateY(-50%)',height:180,width:180,objectFit:'contain',opacity:0.06,filter:'grayscale(1) brightness(10)',pointerEvents:'none',userSelect:'none'}}
+        />
+        <div style={{maxWidth:900,margin:'0 auto',position:'relative'}}>
+          {/* Logo + name row */}
+          <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:24}}>
+            <div style={{width:48,height:48,borderRadius:10,background:'#ffffff14',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,overflow:'hidden'}}>
+              <img
+                src={`https://logo.clearbit.com/${acct.domain}`}
+                alt={acct.name}
+                onError={e=>{e.target.style.display='none';e.target.parentNode.innerHTML=`<span style="color:#fff;font-weight:800;font-size:18px">${acct.name[0]}</span>`;}}
+                style={{width:36,height:36,objectFit:'contain'}}
+              />
+            </div>
+            <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
+              <span style={{color:C.white,fontWeight:800,fontSize:18}}>{acct.name}</span>
+              <Badge text={acct.industry}/>
+              <Badge text={acct.signal} color={acct.signalColor}/>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
-            <Badge label="🚨 URGENT" color={C.orange} />
-            <Badge label={account.signal} color="rgba(255,107,0,0.2)" textColor={C.orange} />
-            {account.products.map(p => <Badge key={p} label={p} color="rgba(255,255,255,0.1)" textColor={C.white} />)}
+          {/* What they do */}
+          <div style={{marginBottom:32,paddingBottom:32,borderBottom:`1px solid #ffffff18`}}>
+            <div style={{fontSize:11,fontWeight:700,letterSpacing:'1.5px',textTransform:'uppercase',color:C.orange,marginBottom:10}}>What they do</div>
+            <p style={{color:'#DDDDDD',fontSize:15,lineHeight:1.75,maxWidth:700,margin:0}}>{acct.whatTheyDo}</p>
           </div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: C.white, lineHeight: 1.3, maxWidth: 680, marginBottom: 12 }}>
-            {account.heroTitle}
-          </div>
-          <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, maxWidth: 620 }}>
-            {account.heroSub}
+          {/* Why Amplitude */}
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:'1.5px',textTransform:'uppercase',color:C.orange,marginBottom:12}}>Why Amplitude, why now</div>
+          <h1 style={{color:C.white,fontSize:36,fontWeight:800,lineHeight:1.2,marginBottom:18,maxWidth:680}}>{acct.heroTitle}</h1>
+          <p style={{color:'#BBBBBB',fontSize:17,lineHeight:1.7,maxWidth:640}}>{acct.heroSub}</p>
+          {/* Tab bar */}
+          <div style={{display:'flex',gap:8,marginTop:32,flexWrap:'wrap'}}>
+            {['brief','tasks','one-pager'].map(t=>(
+              <button key={t} className="tab-btn" style={tabStyle(tab===t)} onClick={()=>setTab(t)}>
+                {t==='brief'?'Full Brief':t==='tasks'?`Tasks (${acct.tasks.length})`:'One-Pager'}
+              </button>
+            ))}
           </div>
         </div>
-        {/* Stats Bar */}
-        <div style={{ background: 'rgba(255,255,255,0.05)', borderTop: '1px solid rgba(255,255,255,0.1)', padding: '16px 32px', display: 'flex', gap: 32, flexWrap: 'wrap' }}>
-          {account.stats.map(s => (
-            <div key={s.label}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: C.orange }}>{s.value}</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s.label}</div>
+      </div>
+      {tab==='tasks' && (
+        <Section title="AE Tasks">
+          <p style={{fontSize:14,color:C.textMuted,marginBottom:24}}>Task completion is saved in your browser. Check off each step as you go.</p>
+          <TaskList accountId={acct.id} tasks={acct.tasks}/>
+        </Section>
+      )}
+      {tab==='one-pager' && (
+        <Section title="One-Pager Generator">
+          <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:14,padding:32,maxWidth:640}}>
+            <div style={{fontSize:22,fontWeight:800,color:C.dark,marginBottom:8}}>Generate a leave-behind for {acct.name}</div>
+            <p style={{fontSize:14,color:C.textMuted,lineHeight:1.65,marginBottom:24}}>The <strong>account-and-products-one-pager</strong> skill generates a polished, account-personalized .docx file — branded with Amplitude blue, with product sections, specific use cases, and AI callouts. It researches the account first using Granola, Salesforce, Outreach, and web search before writing a word.</p>
+            <div style={{background:C.grayLight,borderRadius:10,padding:20,marginBottom:24}}>
+              <div style={{fontSize:11,fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:C.orange,marginBottom:10}}>Products to include for {acct.name}</div>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                {acct.products_detail.map(p=>(
+                  <span key={p.name} style={{background:C.orange,color:'#fff',borderRadius:6,padding:'4px 12px',fontSize:12,fontWeight:700}}>{p.name}</span>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Tab Bar */}
-      <div style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: '0 24px', display: 'flex', gap: 0, overflowX: 'auto' }}>
-        {tabs.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            style={{
-              padding: '14px 18px',
-              fontSize: 13,
-              fontWeight: tab === t.id ? 700 : 500,
-              color: tab === t.id ? C.orange : C.textMuted,
-              borderBottom: tab === t.id ? `2px solid ${C.orange}` : '2px solid transparent',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Content */}
-      <div style={{ padding: '28px 32px', maxWidth: 900 }}>
-
-        {tab === 'brief' && (
-          <div>
-            <Section title="What They Do">
-              <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 10, padding: 16, fontSize: 14, lineHeight: 1.7, color: '#333' }}>
-                {account.whatTheyDo}
+            <div style={{background:'#2962FF'+'0D',border:`1px solid #2962FF33`,borderRadius:10,padding:20,marginBottom:24}}>
+              <div style={{fontSize:11,fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:'#2962FF',marginBottom:8}}>Prompt to use in Claude</div>
+              <div style={{fontFamily:'monospace',fontSize:13,color:C.dark,lineHeight:1.6,userSelect:'all'}}>
+                Make a one-pager for {acct.name} featuring {acct.products_detail.map(p=>p.name).join(', ')}
               </div>
-            </Section>
-            <Section title="The Core Challenge">
-              <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 10, padding: 16 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{account.challengeTitle}</div>
-                <div style={{ fontSize: 14, lineHeight: 1.7, color: '#333' }}>{account.challengeBody}</div>
+            </div>
+            <p style={{fontSize:12,color:C.textMuted,lineHeight:1.5}}>The skill will ask you to confirm the account name and product selection, research the account, write personalized content, and deliver a .docx file you can open in Google Drive or share directly with the prospect.</p>
+          </div>
+        </Section>
+      )}
+      {tab==='brief' && <>
+        {/* Stats */}
+        <Section bg={C.grayLight}>
+          <div style={{display:'flex',gap:16,flexWrap:'wrap'}}>
+            {acct.stats.map(s=>(
+              <div key={s.label} style={{textAlign:'center',padding:'20px 28px',background:C.white,borderRadius:12,border:`1px solid ${C.border}`,flex:'1 1 140px'}}>
+                <div style={{fontSize:28,fontWeight:800,color:C.orange,marginBottom:4}}>{s.value}</div>
+                <div style={{fontSize:12,color:C.textMuted}}>{s.label}</div>
               </div>
-            </Section>
-            <Section title="Confirmed Tech Stack">
-              {account.techStack.map(t => (
-                <div key={t.tool} style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 10, padding: 14, marginBottom: 10 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                    <span style={{ fontWeight: 700, fontSize: 14 }}>{t.tool}</span>
-                    <Badge label={t.category} color={C.grayLight} textColor={C.dark} small />
-                    <ConfidenceBadge confidence={t.confidence} />
-                  </div>
-                  <div style={{ fontSize: 13, color: '#444', lineHeight: 1.6 }}>{t.displacement}</div>
+            ))}
+          </div>
+        </Section>
+        {/* Challenge */}
+        <Section title="The Challenge">
+          <h2 style={{fontSize:22,fontWeight:800,marginBottom:14}}>{acct.challengeTitle}</h2>
+          <p style={{fontSize:15,color:C.textMuted,lineHeight:1.75,maxWidth:720}}>{acct.challengeBody}</p>
+        </Section>
+        {/* Tech Stack */}
+        <Section title="Current Tech Stack" bg={C.grayLight}>
+          <p style={{fontSize:14,color:C.textMuted,marginBottom:20}}>Confirmed and likely tools detected. Each represents a displacement or consolidation opportunity.</p>
+          <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:28}}>
+            {acct.techStack.map(t=>(
+              <div key={t.tool} style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:10,padding:16,display:'flex',gap:16,alignItems:'flex-start'}}>
+                <div style={{minWidth:120}}>
+                  <div style={{fontWeight:700,fontSize:14,color:C.dark,marginBottom:4}}>{t.tool}</div>
+                  <div style={{fontSize:11,color:C.textMuted,marginBottom:6}}>{t.category}</div>
+                  <ConfidenceBadge level={t.confidence}/>
                 </div>
-              ))}
-            </Section>
-            <Section title="Amplitude Product Gaps">
-              {account.gaps.map(g => (
-                <div key={g.name} style={{ display: 'flex', gap: 12, marginBottom: 10 }}>
-                  <div style={{ color: C.red, fontSize: 16, marginTop: 1 }}>●</div>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: 13 }}>{g.name}</div>
-                    <div style={{ fontSize: 13, color: '#555', lineHeight: 1.6 }}>{g.detail}</div>
-                  </div>
+                <div style={{flex:1,borderLeft:`1px solid ${C.border}`,paddingLeft:16}}>
+                  <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.5px',color:C.orange,marginBottom:4}}>Displacement angle</div>
+                  <div style={{fontSize:13,color:C.dark,lineHeight:1.55}}>{t.displacement}</div>
                 </div>
-              ))}
-            </Section>
-            <Section title="Why Amplitude, Why Now">
-              {account.whyNow.map((p, i) => (
-                <div key={i} style={{ background: i === 0 ? '#FFF8F3' : C.white, border: `1px solid ${i === 0 ? C.orange + '40' : C.border}`, borderRadius: 10, padding: 16, marginBottom: 10, fontSize: 14, lineHeight: 1.75, color: '#333' }}>
-                  {p}
-                </div>
-              ))}
-            </Section>
-            <Section title="Amplitude Products for This Account">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
-                {account.features.map(f => (
-                  <div key={f.title} style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 10, padding: 16 }}>
-                    <div style={{ fontSize: 22, marginBottom: 8 }}>{f.icon}</div>
-                    <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 6 }}>{f.title}</div>
-                    <div style={{ fontSize: 13, color: '#555', lineHeight: 1.6 }}>{f.body}</div>
+              </div>
+            ))}
+          </div>
+          {acct.gaps.length>0 && (
+            <>
+              <div style={{fontSize:12,fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:C.red,marginBottom:12}}>Confirmed Gaps — No Tool Detected</div>
+              <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+                {acct.gaps.map(g=>(
+                  <div key={g.name} style={{background:C.red+'08',border:`1px solid ${C.red}33`,borderRadius:8,padding:'10px 16px',flex:'1 1 240px'}}>
+                    <div style={{fontWeight:700,fontSize:13,color:C.red,marginBottom:4}}>{g.name}</div>
+                    <div style={{fontSize:12,color:C.dark,lineHeight:1.5}}>{g.detail}</div>
                   </div>
                 ))}
               </div>
-            </Section>
-            <Section title="Product Detail + ACV Estimates">
-              {account.products_detail.map(p => (
-                <div key={p.name} style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 10, padding: 14, marginBottom: 10 }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: C.orange, marginBottom: 6 }}>{p.name}</div>
-                  <div style={{ fontSize: 13, color: '#444', lineHeight: 1.6 }}>{p.desc}</div>
-                </div>
-              ))}
-              <div style={{ background: '#F0FFF4', border: `1px solid ${C.green}40`, borderRadius: 10, padding: 14 }}>
-                <div style={{ fontWeight: 700, fontSize: 13, color: C.green, marginBottom: 4 }}>Realistic First Deal Range</div>
-                <div style={{ fontSize: 13, color: '#333' }}>2-product bundle (Experiment + Session Replay): <strong>$100K–$180K ACV</strong> — directional, to be confirmed in SFDC pricing. Hotjar displacement creates a budget consolidation narrative.</div>
+            </>
+          )}
+        </Section>
+        {/* Where Amplitude Fits */}
+        <Section title="Where Amplitude Fits">
+          <div style={{display:'flex',gap:20,flexWrap:'wrap'}}>
+            {acct.features.map(f=>(
+              <div key={f.title} style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:12,padding:24,flex:'1 1 240px'}}>
+                <div style={{fontSize:26,marginBottom:10}}>{f.icon}</div>
+                <div style={{fontWeight:700,fontSize:15,marginBottom:8,color:C.dark}}>{f.title}</div>
+                <div style={{fontSize:13,color:C.textMuted,lineHeight:1.6}}>{f.body}</div>
               </div>
-            </Section>
-            <Section title="Partner Intelligence">
-              <PartnerSection />
-            </Section>
-            <Section title="Target Contacts">
-              <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 12 }}>⚠️ Verify on LinkedIn before outreach — ZoomInfo data may lag role changes by 30–90 days. New CEO Brett Patterson confirmed via investor relations page.</div>
-              {account.contacts.map(c => <ContactCard key={c.name} contact={c} />)}
-            </Section>
+            ))}
           </div>
-        )}
-
-        {tab === 'tasks' && (
-          <div>
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 4 }}>Action Plan</div>
-              <div style={{ fontSize: 13, color: C.textMuted }}>Check tasks off as you complete them. Progress is saved in your browser.</div>
-            </div>
-            <TaskList accountId={account.id} tasks={account.tasks} />
+        </Section>
+        {/* Suggested Contacts */}
+        <Section title="Suggested Contacts — ZoomInfo" bg={C.grayLight}>
+          <p style={{fontSize:14,color:C.textMuted,marginBottom:20}}>5 contacts ranked by MEDDICC priority. Click any row to see messaging POV. Verify names on LinkedIn before outreach — ZoomInfo data may lag role changes.</p>
+          {acct.contacts.map(c=><ContactCard key={c.name} c={c}/>)}
+        </Section>
+        {/* Why Now */}
+        <Section title="Why Now">
+          <div style={{background:C.orange+'0D',border:`1px solid ${C.orange}33`,borderRadius:12,padding:28}}>
+            {acct.whyNow.map((p,i)=>(
+              <p key={i} style={{fontSize:15,lineHeight:1.8,color:C.dark,marginBottom:i<acct.whyNow.length-1?14:0}}>{p}</p>
+            ))}
           </div>
-        )}
-
-        {tab === 'questions' && (
-          <div>
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 4 }}>8 Discovery Messages</div>
-              <div style={{ fontSize: 13, color: C.textMuted }}>Channel-specific. Each is grounded in Portillo's specific stack and situation — not a template.</div>
-            </div>
-            <DiscoveryQuestions questions={DISCOVERY_QUESTIONS} />
-          </div>
-        )}
-
-        {tab === 'meddicc' && (
-          <div>
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 4 }}>MEDDICC Pre-Fill</div>
-              <div style={{ fontSize: 13, color: C.textMuted }}>Based on research. Validate Known items in first discovery call. To Validate items are your first-call agenda.</div>
-            </div>
-            <MEDDICC account={account} />
-          </div>
-        )}
-
-        {tab === 'onepager' && (
-          <div>
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 4 }}>Generate a One-Pager</div>
-              <div style={{ fontSize: 13, color: C.textMuted }}>Use the Amplitude one-pager skill to create a personalized .docx for Portillo's.</div>
-            </div>
-            <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Recommended Products for This Account</div>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
-                {account.products.map(p => <Badge key={p} label={p} color={C.orange} />)}
+        </Section>
+        {/* Recommended Products */}
+        <Section title="Recommended Products" bg={C.grayLight}>
+          <div style={{display:'flex',gap:16,flexWrap:'wrap'}}>
+            {acct.products_detail.map(p=>(
+              <div key={p.name} style={{flex:'1 1 220px',background:C.white,border:`1px solid ${C.border}`,borderRadius:12,padding:22}}>
+                <div style={{display:'inline-block',background:C.orange,color:'#fff',borderRadius:6,padding:'4px 12px',fontSize:13,fontWeight:700,marginBottom:10}}>{p.name}</div>
+                <p style={{fontSize:13,color:C.textMuted,lineHeight:1.6,margin:0}}>{p.desc}</p>
               </div>
-              <div style={{ background: '#0D0D0D', borderRadius: 8, padding: 16, fontFamily: 'monospace', fontSize: 13, color: '#fff', marginBottom: 16, lineHeight: 1.6 }}>
-                Make a one-pager for Portillo's featuring Experiment, Session Replay, and Analytics
-              </div>
-              <div style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.6 }}>
-                Copy the prompt above and use it with the <strong>account-and-products-one-pager</strong> skill in Cowork. It will research Portillo's, write personalized use-case content for each product, and deliver a polished .docx file ready to send to Denise Lauer or Keith Correia.
-              </div>
-            </div>
+            ))}
           </div>
-        )}
-      </div>
+        </Section>
+        {/* CTA */}
+        <div style={{background:C.dark,padding:'56px 32px',textAlign:'center'}}>
+          <div style={{maxWidth:560,margin:'0 auto'}}>
+            <h2 style={{color:C.white,fontSize:24,fontWeight:800,marginBottom:14}}>Ready to see it in action?</h2>
+            <p style={{color:'#999',fontSize:15,marginBottom:28,lineHeight:1.6}}>We've built a tailored demo for {acct.name}. 30 minutes — no slide decks, just your data and your use cases.</p>
+            <a href="https://amplitude.com/demo" target="_blank" rel="noreferrer" style={{background:C.orange,color:'#fff',padding:'12px 32px',borderRadius:8,fontWeight:700,fontSize:15,textDecoration:'none',display:'inline-block'}}>Book a 30-min Demo →</a>
+          </div>
+        </div>
+      </>}
     </div>
   );
 }
-
-function HomePage({ accounts, onSelect }) {
+// ─── HOME PAGE ───────────────────────────────────────────────────────────────
+function HomePage({setPage}) {
   return (
-    <div style={{ padding: '32px 32px' }}>
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 6 }}>Net-New Prospects</div>
-        <div style={{ fontSize: 13, color: C.textMuted }}>
-          <span style={{ background: C.orange, color: C.white, padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, marginRight: 8 }}>Net-New Only · No Existing Customers</span>
-          April 15, 2026 · Single Account Sweep
-        </div>
+    <div style={{minHeight:'100vh',background:C.grayLight}}>
+      <div style={{background:C.dark,padding:'72px 32px 64px',textAlign:'center'}}>
+        <Badge text="Net-New Prospects Only · No Existing Customers"/>
+        <h1 style={{color:C.white,fontSize:38,fontWeight:800,marginTop:18,marginBottom:14,lineHeight:1.2}}>Amplitude for your business.</h1>
+        <p style={{color:'#999',fontSize:17,maxWidth:500,margin:'0 auto',lineHeight:1.6}}>Research briefs built around each prospect's specific use cases, tech stack, and buying signals.</p>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
-        {Object.values(accounts).map(a => (
-          <button key={a.id} onClick={() => onSelect(a.id)} style={{
-            background: C.white,
-            border: `1px solid ${C.border}`,
-            borderRadius: 12,
-            padding: 20,
-            textAlign: 'left',
-            transition: 'box-shadow 0.15s',
-            cursor: 'pointer',
-          }}
-          onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.10)'}
-          onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
-          >
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 14 }}>
-              <img
-                src={`https://logo.clearbit.com/${a.domain}`}
-                alt={a.name}
-                style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'contain', background: '#f0f0f0', padding: 4, flexShrink: 0 }}
-                onError={e => { e.target.style.display = 'none'; }}
-              />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 3 }}>{a.name}</div>
-                <div style={{ fontSize: 12, color: C.textMuted }}>{a.industry}</div>
+      <div style={{maxWidth:900,margin:'0 auto',padding:'44px 32px',display:'flex',gap:24,flexWrap:'wrap'}}>
+        {Object.values(ACCOUNTS).map(a=>(
+          <div key={a.id} className="hover-lift" onClick={()=>setPage(a.id)}
+            style={{flex:'1 1 340px',background:C.white,border:`1px solid ${C.border}`,borderRadius:16,padding:32,cursor:'pointer',boxShadow:'0 1px 4px rgba(0,0,0,.06)'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:18}}>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:C.textMuted,marginBottom:5}}>{a.industry}</div>
+                <div style={{fontSize:22,fontWeight:800,color:C.dark}}>{a.name}</div>
               </div>
-              <Badge label="🚨 URGENT" color={C.orange} small />
+              <span style={{background:a.signalColor+'18',color:a.signalColor,border:`1px solid ${a.signalColor}33`,borderRadius:20,padding:'4px 12px',fontSize:11,fontWeight:700}}>{a.signal}</span>
             </div>
-            <div style={{ marginBottom: 12 }}>
-              <Badge label={a.signal} color="rgba(255,107,0,0.12)" textColor={C.orange} small />
+            <p style={{fontSize:14,color:C.textMuted,lineHeight:1.6,marginBottom:20}}>{a.summary}</p>
+            <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:24}}>
+              {a.products.map(p=><span key={p} style={{background:C.grayLight,color:C.grayMid,borderRadius:6,padding:'3px 10px',fontSize:12,fontWeight:600}}>{p}</span>)}
             </div>
-            <div style={{ fontSize: 13, color: '#444', lineHeight: 1.6, marginBottom: 14 }}>
-              {a.summary}
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <span style={{color:C.orange,fontWeight:700,fontSize:13}}>View brief →</span>
+              <span style={{fontSize:12,color:C.textMuted}}>{a.tasks.length} tasks · {a.contacts.length} contacts</span>
             </div>
-            <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 12, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              {a.products.map(p => <Badge key={p} label={p} color={C.grayLight} textColor={C.dark} small />)}
-            </div>
-          </button>
+          </div>
         ))}
       </div>
     </div>
   );
 }
-
-function Nav({ onHome }) {
+// ─── NAV ─────────────────────────────────────────────────────────────────────
+function Nav({page,setPage}) {
   return (
-    <div style={{
-      position: 'sticky', top: 0, zIndex: 100,
-      background: C.dark,
-      padding: '0 24px',
-      display: 'flex',
-      alignItems: 'center',
-      height: 56,
-      borderBottom: `2px solid ${C.orange}`,
-    }}>
-      <button onClick={onHome} style={{ display: 'flex', alignItems: 'center', gap: 10, color: C.white }}>
-        <div style={{ width: 28, height: 28, background: C.orange, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 14 }}>A</div>
-        <span style={{ fontWeight: 700, fontSize: 15 }}>Prospect Hub</span>
+    <nav style={{background:C.dark,padding:'0 32px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:100}}>
+      <button onClick={()=>setPage('home')} style={{background:'none',border:'none',cursor:'pointer',display:'flex',alignItems:'center',gap:8}}>
+        <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill={C.orange}/>
+          <path d="M8 22L16 10L24 22" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <span style={{color:C.white,fontWeight:700,fontSize:16}}>Prospect Hub</span>
       </button>
-      <div style={{ marginLeft: 'auto', fontSize: 11, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-        Peter Walters · Emerging Enterprise · Apr 2026
+      <div style={{display:'flex',gap:6}}>
+        {Object.values(ACCOUNTS).map(a=>(
+          <button key={a.id} className="tab-btn" onClick={()=>setPage(a.id)}
+            style={{background:page===a.id?C.orange:'transparent',color:page===a.id?C.white:'#999',border:`1px solid ${page===a.id?C.orange:'#333'}`}}>
+            {a.name}
+          </button>
+        ))}
       </div>
-    </div>
+    </nav>
   );
 }
-
+// ─── ROOT ─────────────────────────────────────────────────────────────────────
 function App() {
-  const [page, setPage] = useState('home');
-  const [selectedId, setSelectedId] = useState(null);
-
-  const onSelect = (id) => { setSelectedId(id); setPage('account'); window.scrollTo(0, 0); };
-  const onHome = () => { setPage('home'); window.scrollTo(0, 0); };
-
+  const [page,setPage]=useState('home');
+  const acct = ACCOUNTS[page];
   return (
-    <div style={{ minHeight: '100vh', background: C.grayLight }}>
-      <Nav onHome={onHome} />
-      {page === 'home' && <HomePage accounts={ACCOUNTS} onSelect={onSelect} />}
-      {page === 'account' && selectedId && (
-        <AccountPage account={ACCOUNTS[selectedId]} onBack={onHome} />
-      )}
+    <div>
+      <Nav page={page} setPage={setPage}/>
+      {page==='home' ? <HomePage setPage={setPage}/> : <AccountPage acct={acct}/>}
     </div>
   );
 }
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
-
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
