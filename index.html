@@ -1,1 +1,507 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="/netnewprospects/favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="Web site created using create-react-app"/><link rel="apple-touch-icon" href="/netnewprospects/logo192.png"/><link rel="manifest" href="/netnewprospects/manifest.json"/><title>React App</title><script defer="defer" src="/netnewprospects/static/js/main.97f28520.js"></script><link href="/netnewprospects/static/css/main.e6c13ad2.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Amplitude Prospect Hub</title>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,sans-serif;background:#F7F7F7}
+    input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:#FF6B00;flex-shrink:0}
+    .hover-lift{transition:box-shadow .2s,transform .2s}
+    .hover-lift:hover{box-shadow:0 8px 32px rgba(0,0,0,.12)!important;transform:translateY(-2px)}
+    .tab-btn{border:none;cursor:pointer;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;transition:all .15s}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef} = React;
+
+const C = {
+  orange:'#FF6B00', dark:'#0D0D0D', gray:'#1C1C1C',
+  grayMid:'#3A3A3A', grayLight:'#F7F7F7', border:'#E5E5E5',
+  white:'#FFFFFF', textMuted:'#6B6B6B',
+  amber:'#F59E0B', green:'#22C55E', blue:'#3B82F6',
+  purple:'#8B5CF6', red:'#EF4444',
+};
+
+const today = new Date();
+const addDays = n => { const d=new Date(today); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0]; };
+const fmt = s => { const [y,m,d]=s.split('-'); return `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]} ${+d}`; };
+const isOverdue = s => new Date(s) < today;
+
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const ACCOUNTS = {
+  teachable: {
+    id:'teachable', name:'Teachable', industry:'EdTech',
+    tagline:'Unified product intelligence for the future of online learning',
+    signal:'Active Evaluation', signalColor:C.green,
+    products:['Analytics','Session Replay','Guides'],
+    summary:"Teachable is building AI-powered adaptive learning while managing analytics across disconnected tools. Amplitude brings it together.",
+    heroTitle:'From fragmented insights to one unified view of your learners.',
+    heroSub:"Teachable is building the next generation of AI-powered learning — adaptive assessments, personalized pathways, a mobile app with 130K+ monthly active users. The product teams driving those decisions deserve a single platform to understand learner behavior, debug friction, and launch in-product experiences without waiting on engineering.",
+    stats:[
+      {value:'130K+',label:'Monthly mobile app users'},
+      {value:'4',label:'New plan tiers launched in 2025'},
+      {value:'3+',label:'Disconnected analytics tools today'},
+      {value:'$100K',label:'Estimated consolidation savings'},
+    ],
+    challengeTitle:'Growing product complexity demands unified visibility.',
+    challengeBody:"As Teachable's product footprint expands — AI features, mobile, commerce — the gap between what's happening in the product and what teams can actually see grows wider. When behavioral analytics, session recordings, feature flags, and in-app messaging live in separate tools, the cost isn't just inefficiency. It's slower decisions, missed activation moments, and AI features shipped without the instrumentation to know if they're working.",
+    techStack:[
+      {tool:'Mixpanel',category:'Product Analytics',confidence:'confirmed',displacement:"Core product analytics — Amplitude consolidates this with Session Replay and Guides into one platform, eliminating the data silo."},
+      {tool:'Google Analytics',category:'Web Analytics',confidence:'confirmed',displacement:"Web traffic only, siloed from in-product behavior. Amplitude unifies both views in one behavioral model."},
+      {tool:'Hotjar',category:'Session Replay',confidence:'likely',displacement:"Session recordings disconnected from event data. Amplitude Replay links directly to behavioral events — no tool-switching to diagnose drop-off."},
+      {tool:'Intercom',category:'In-app Messaging',confidence:'likely',displacement:"Messaging without behavioral targeting. Amplitude Guides triggers based on what users have or haven't done — no engineer required."},
+    ],
+    gaps:[
+      {name:'A/B Experimentation',detail:"No confirmed experimentation tool — they're shipping AI features without a way to measure impact vs. control."},
+      {name:'CDP / Data Layer',detail:"No unified event schema. Mobile, web, and commerce events are fragmented across tools."},
+    ],
+    features:[
+      {icon:'📊',title:'Course Completion Analytics',body:"Understand exactly where learners drop off in your course funnels. Connect enrollment events to completion rates and fix friction with evidence — not guesswork."},
+      {icon:'🎥',title:'Session Replay, Connected to Events',body:"When you see a drop-off in your funnel, watch the exact sessions that explain it — without switching tools. Replay is linked directly to behavioral events."},
+      {icon:'🎯',title:'In-Product Guides Without Engineering',body:"Launch onboarding flows and AI feature prompts that target users based on what they have or haven't done — from within Amplitude, no engineer required."},
+      {icon:'🤖',title:'AI Feature Instrumentation',body:"As Teachable ships adaptive assessments and personalized pathways, Amplitude measures whether users are adopting them and achieving better outcomes."},
+    ],
+    whyNow:[
+      "Teachable's 2026 roadmap is centered on AI-powered learning — adaptive assessments, personalized pathways, smarter certification flows. These features need behavioral instrumentation from day one to know if learners are engaging with AI guidance and achieving better outcomes than the baseline.",
+      "Mobile is no longer secondary — 130K monthly active users means mobile behavior needs to be in the same analytics platform as web, not a separate reporting silo. Every product decision that doesn't account for mobile is working with half the picture.",
+      "Getting Amplitude in place now — as these AI features ship and the mobile user base grows — means every product decision is made on complete, connected data. Waiting means instrumenting AI features retroactively, which is the hardest and most expensive time to do it.",
+    ],
+    products_detail:[
+      {name:'Analytics',desc:"Behavioral analytics and funnels — the core platform. Replaces fragmented tool-hopping with one source of truth for learner behavior."},
+      {name:'Session Replay',desc:"Watch real user sessions linked to your event data. Debug UX issues in minutes without recreating them manually."},
+      {name:'Guides',desc:"Launch in-product onboarding flows and feature announcements targeted by user behavior — no engineering required."},
+    ],
+    contacts:[
+      {name:'VP of Product / CPO',signal:'Economic Buyer',signalColor:C.orange,why:"Owns the analytics tool consolidation decision. Feels the pain of 3+ disconnected tools when PMs ask cross-platform questions.",messaging:"Lead with consolidation ROI: 'Your PMs are context-switching between Mixpanel, Hotjar, and Intercom to answer one question — that's a velocity problem, not a tooling problem.' Reference the 130K mobile MAU and AI roadmap as the why now.",channel:'LinkedIn',tip:'Search: "Teachable VP Product" or "Teachable CPO"'},
+      {name:'Head of Data / Analytics',signal:'Champion',signalColor:C.purple,why:"Building the dashboards PMs can't get answers from. Will evangelize internally once they see Amplitude's data model.",messaging:"'You're maintaining pipelines that were never meant to talk to each other. Amplitude makes the event schema the single source of truth — Mixpanel, GA, and Intercom data coexist in one warehouse-connected model.' Lead with technical depth.",channel:'Email',tip:'Search: "Teachable analytics engineer" or "Teachable data engineer"'},
+      {name:'Head of Growth',signal:'Stakeholder',signalColor:C.blue,why:"Cares about funnel optimization and experiment velocity. No experimentation tool = no way to run controlled tests on new AI features.",messaging:"'How are you measuring whether the new adaptive assessment feature actually improves completion vs. the control group?' The A/B testing gap is the sharpest hook — they're shipping without a way to prove impact.",channel:'LinkedIn',tip:'Search: "Teachable Head of Growth" or "Teachable Growth PM"'},
+      {name:'CTO / VP Engineering',signal:'Technical Buyer',signalColor:C.grayMid,why:"Approves data infrastructure. Cares about SDK quality, warehouse integration, and not adding another point solution.",messaging:"'One SDK, one data contract, warehouse-native. Amplitude doesn't add pipeline complexity — it reduces it.' Frame as infrastructure consolidation, not analytics tool purchase.",channel:'Email',tip:'Search: "Teachable CTO" or "Teachable VP Engineering"'},
+      {name:'CEO / Co-Founder',signal:'Exec Sponsor',signalColor:C.orange,why:"New AI bets require measurement infrastructure. Strategic buy — gets approved at exec level when the ROI frame is clear.",messaging:"'Teachable is shipping AI features that need to earn their place in the roadmap. That only happens if you know whether users are engaging with them — and that requires instrumentation from day one.' Brief, peer-to-peer.",channel:'Email',tip:'Verify current CEO on LinkedIn or Crunchbase'},
+    ],
+    tasks:[
+      {id:'teach-1',title:'Find VP Product contact on LinkedIn',description:"Target: VP Product or CPO. Search 'Teachable VP Product' — confirm current name and verify they're still in role.",channel:'LinkedIn',due:addDays(1)},
+      {id:'teach-2',title:'Send first outreach email to VP Product',description:"Lead with consolidation pain: 3 disconnected tools + AI roadmap = the window is now. Use the AI feature instrumentation angle.",channel:'Email',due:addDays(2)},
+      {id:'teach-3',title:'Enroll Teachable in EdTech AI sequence in Outreach',description:"Sequence: EdTech AI + consolidation. Note prior touch history if any. Tag account in SFDC with intent signal.",channel:'Outreach',due:addDays(2)},
+      {id:'teach-4',title:'Follow up via LinkedIn — Head of Growth',description:"A/B testing gap angle: 'How are you measuring impact of the new adaptive assessment feature vs. baseline?' Under 100 words.",channel:'LinkedIn',due:addDays(5)},
+    ],
+  },
+
+  c2fo: {
+    id:'c2fo', name:'C2FO', industry:'FinTech',
+    tagline:'Real-time product visibility for a platform scaling globally',
+    signal:'Expansion Signal', signalColor:C.blue,
+    products:['Analytics','Session Replay','CDP'],
+    summary:"C2FO just launched in Nigeria and closed $30M. As the platform expands globally, product intelligence needs to keep pace.",
+    heroTitle:'Real-time product visibility for a platform scaling globally.',
+    heroSub:"C2FO has crossed $400B in lifetime funding to customers, launched CycleFlow in Nigeria, expanded into India via C2treds, and secured $30M to accelerate further. At that pace, product teams need precise, real-time visibility into how suppliers and buyers across diverse markets are experiencing the platform — and whether they're activating successfully.",
+    stats:[
+      {value:'$400B+',label:'Lifetime funding facilitated'},
+      {value:'$30M',label:'Raised (IFC, 2025)'},
+      {value:'200+',label:'Global enterprise clients'},
+      {value:'3',label:'New market launches since 2024'},
+    ],
+    challengeTitle:'Global expansion at speed requires product intelligence that keeps pace.',
+    challengeBody:"When a platform launches in a new market — Nigeria, India, Southeast Asia — the first 30 days are critical. Are suppliers completing their first funding request? Where do buyers drop off in the onboarding flow? If that behavioral data is fragmented across production monitoring, marketing analytics, and BI tools, the window to iterate closes before the data arrives.",
+    techStack:[
+      {tool:'Google Analytics',category:'Web Analytics',confidence:'confirmed',displacement:"Web traffic only — no in-product behavioral data. Amplitude captures supplier/buyer events inside the platform that GA never sees."},
+      {tool:'Tableau / BI',category:'Business Intelligence',confidence:'likely',displacement:"Retroactive reporting. Amplitude gives product teams self-serve behavioral analytics without waiting on a data team query."},
+      {tool:'Datadog / New Relic',category:'Production Monitoring',confidence:'likely',displacement:"Infrastructure monitoring, not user behavior. Doesn't answer why suppliers aren't completing onboarding in Nigeria."},
+      {tool:'Salesforce Marketing Cloud',category:'Marketing Analytics',confidence:'signal only',displacement:"Marketing funnel only, siloed from product behavior. Amplitude bridges marketing-to-product journey in one behavioral model."},
+    ],
+    gaps:[
+      {name:'Product Analytics',detail:"No confirmed product analytics tool — behavioral data for onboarding funnels is blind across new markets."},
+      {name:'Session Replay',detail:"No session replay — when onboarding drop-off spikes in a new market, there's no way to watch what's happening."},
+      {name:'CDP',detail:"No unified data layer — events from web, mobile, and enterprise integrations are fragmented."},
+    ],
+    features:[
+      {icon:'🌍',title:'Onboarding Funnels by Market',body:"Track supplier and buyer onboarding completion rates across Nigeria, India, and established markets in a single view. Identify drop-off by region before it compounds."},
+      {icon:'🎥',title:'Session Replay for Friction Diagnosis',body:"When onboarding drop-off spikes in a new market, watch the exact sessions across device types and languages. Resolve UX issues in hours, not weeks."},
+      {icon:'📈',title:'Feature Adoption Across Cohorts',body:"Understand which enterprise clients are getting full value from the platform and which aren't. Know what correlates with successful funding outcomes."},
+      {icon:'🔗',title:'Connected Data — One Platform',body:"Stop bouncing between production monitoring, marketing tools, and BI. Amplitude consolidates product behavioral data so your team answers questions in one place."},
+    ],
+    whyNow:[
+      "C2FO just launched CycleFlow in Nigeria — the first phase of a continent-wide working capital strategy. New market launches create a narrow window where product decisions matter most: is the onboarding flow working for Nigerian SMEs? Are the right actions being completed?",
+      "Without real-time behavioral analytics connected to the product, those questions get answered too late — after churn signals appear, not before. The $30M IFC investment is earmarked for platform acceleration. That's a mandate to move fast, which means instrumentation needs to be in place before the next market launches, not after.",
+      "Amplitude gives C2FO's product team one platform to understand user behavior from first session to funded invoice — across every market, device type, and user persona. The global expansion happening now is the exact moment to put that infrastructure in place.",
+    ],
+    products_detail:[
+      {name:'Analytics',desc:"Behavioral analytics, funnels, and retention — one view of user behavior across every market and product surface."},
+      {name:'Session Replay',desc:"Watch real sessions linked to behavioral events. Identify onboarding friction in new markets before it becomes a retention problem."},
+      {name:'CDP',desc:"Consolidate event data from across the C2FO platform into a single, clean data layer. Reduce pipeline complexity across markets."},
+    ],
+    contacts:[
+      {name:'Chief Product Officer',signal:'Economic Buyer',signalColor:C.orange,why:"Owns the product analytics decision. Directly accountable for onboarding success in new markets.",messaging:"'You're launching in new markets every 6 months but product visibility into each launch is fragmented across 4 different tools. When Nigeria onboarding dropped, how fast did you know why?' Reference the $30M mandate to move fast.",channel:'Email',tip:'Search: "C2FO Chief Product Officer" or "C2FO VP Product"'},
+      {name:'Head of Data Analytics',signal:'Champion',signalColor:C.purple,why:"Building dashboards that can't answer behavioral questions. Tired of being the blocker between PMs and data.",messaging:"'C2FO's product teams are asking behavioral questions your BI stack wasn't built to answer — not without a data engineer in the loop. Amplitude is the self-serve layer that removes you from the critical path.'",channel:'LinkedIn',tip:'Search: "C2FO data analytics" or "C2FO analytics engineer"'},
+      {name:'VP Engineering / CTO',signal:'Technical Buyer',signalColor:C.grayMid,why:"The IFC investment means infrastructure needs to scale. Cares about SDK quality, data pipeline health, and not adding point solutions.",messaging:"'One SDK that instruments web and mobile simultaneously, warehouse-native schema, no additional data pipelines to maintain. Amplitude reduces infrastructure complexity — it doesn't add to it.'",channel:'Email',tip:'Search: "C2FO VP Engineering" or "C2FO CTO"'},
+      {name:'Head of Product — International',signal:'Stakeholder',signalColor:C.blue,why:"Owns the Nigeria and India launches day-to-day. Closest to the onboarding funnel failure modes.",messaging:"'You're launching in a market where you can't watch session replays because your current tool doesn't support the device mix. Amplitude does — and the events, replay, and funnel data are all in one place.'",channel:'LinkedIn',tip:'Search: "C2FO product manager" or "C2FO international"'},
+      {name:'Sandy Kemper — CEO',signal:'Exec Sponsor',signalColor:C.orange,why:"Just closed $30M with a mandate to accelerate global expansion. Strategic buy gets signed at exec level.",messaging:"'You're 30 days into Nigeria and you don't have real-time visibility into whether the product experience is landing. That's the gap Amplitude closes. As you expand to 5 more markets, instrumentation is the bet that pays off at every launch.' Brief, peer-to-peer.",channel:'Email',tip:'Sandy Kemper — C2FO founder. Verify current role on LinkedIn.'},
+    ],
+    tasks:[
+      {id:'c2fo-1',title:'Request warm intro via IFC network',description:"IFC is an Amplitude strategic partner. Ping #alliances on Slack: 'IFC just invested $30M in C2FO — can we get a warm intro through the IFC partnership?'",channel:'Partner',due:addDays(1)},
+      {id:'c2fo-2',title:'First outreach to CPO',description:"Lead with Nigeria onboarding visibility gap. Reference $30M IFC round as mandate to move fast. Use the 'how fast did you know why' angle.",channel:'Email',due:addDays(2)},
+      {id:'c2fo-3',title:'Enroll C2FO in global expansion sequence in Outreach',description:"Sequence: FinTech global expansion + product analytics. Tag account with 'expansion signal' and '$30M raise'. Note IFC intro attempt in SFDC.",channel:'Outreach',due:addDays(2)},
+      {id:'c2fo-4',title:'LinkedIn follow-up — Head of Data Analytics',description:"Data self-serve angle: 'C2FO's PMs are asking behavioral questions your BI stack wasn't built for.' Under 100 words. Send only if no CPO response.",channel:'LinkedIn',due:addDays(5)},
+    ],
+  },
+};
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const Badge = ({text,color=C.orange,bg}) => (
+  <span style={{background:bg||color+'18',color,border:`1px solid ${color}33`,borderRadius:20,padding:'3px 12px',fontSize:11,fontWeight:700,letterSpacing:'0.5px',textTransform:'uppercase',whiteSpace:'nowrap'}}>
+    {text}
+  </span>
+);
+
+const ChannelBadge = ({ch}) => {
+  const map={LinkedIn:{bg:'#0A66C2',label:'LinkedIn'},Email:{bg:'#6B7280',label:'Email'},Phone:{bg:'#059669',label:'Phone'},Outreach:{bg:C.orange,label:'Outreach'},Partner:{bg:C.purple,label:'Partner Intro'},Text:{bg:'#374151',label:'Text'}};
+  const s=map[ch]||{bg:C.grayMid,label:ch};
+  return <span style={{background:s.bg,color:'#fff',borderRadius:4,padding:'2px 8px',fontSize:11,fontWeight:700}}>{s.label}</span>;
+};
+
+const ConfidenceBadge = ({level}) => {
+  const map={confirmed:{color:C.green,label:'Confirmed'},likely:{color:C.amber,label:'Likely'},'signal only':{color:C.textMuted,label:'Signal Only'}};
+  const s=map[level]||{color:C.textMuted,label:level};
+  return <span style={{color:s.color,fontSize:11,fontWeight:700,border:`1px solid ${s.color}44`,borderRadius:4,padding:'2px 8px'}}>{s.label}</span>;
+};
+
+const Section = ({title,children,bg=C.white}) => (
+  <div style={{background:bg,padding:'56px 0'}}>
+    <div style={{maxWidth:900,margin:'0 auto',padding:'0 32px'}}>
+      {title && <div style={{fontSize:12,fontWeight:700,letterSpacing:'1.5px',textTransform:'uppercase',color:C.orange,marginBottom:28}}>{title}</div>}
+      {children}
+    </div>
+  </div>
+);
+
+// ─── TASK LIST ───────────────────────────────────────────────────────────────
+function TaskList({accountId,tasks}) {
+  const key = `amp_tasks_${accountId}`;
+  const [done,setDone] = useState(() => {
+    try{return JSON.parse(localStorage.getItem(key))||{};}catch{return {};}
+  });
+
+  const toggle = id => {
+    setDone(prev => {
+      const next = {...prev,[id]:!prev[id]};
+      localStorage.setItem(key,JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const pending = tasks.filter(t=>!done[t.id]);
+  const completed = tasks.filter(t=>done[t.id]);
+
+  const TaskRow = ({t}) => {
+    const over = !done[t.id] && isOverdue(t.due);
+    return (
+      <div style={{display:'flex',gap:14,alignItems:'flex-start',padding:'16px 0',borderBottom:`1px solid ${C.border}`,opacity:done[t.id]?0.5:1}}>
+        <input type="checkbox" checked={!!done[t.id]} onChange={()=>toggle(t.id)} style={{marginTop:3}}/>
+        <div style={{flex:1}}>
+          <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',marginBottom:4}}>
+            <span style={{fontSize:15,fontWeight:done[t.id]?400:600,color:C.dark,textDecoration:done[t.id]?'line-through':'none'}}>{t.title}</span>
+            <ChannelBadge ch={t.channel}/>
+            {over && <span style={{fontSize:11,fontWeight:700,color:C.red}}>OVERDUE</span>}
+          </div>
+          <div style={{fontSize:13,color:C.textMuted,lineHeight:1.5,marginBottom:4}}>{t.description}</div>
+          <div style={{fontSize:11,color:over&&!done[t.id]?C.amber:C.textMuted}}>Due {fmt(t.due)}</div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div>
+      {pending.length===0 && completed.length>0 && (
+        <div style={{textAlign:'center',padding:'32px',color:C.green,fontWeight:700,fontSize:16}}>✅ All tasks complete</div>
+      )}
+      {pending.map(t=><TaskRow key={t.id} t={t}/>)}
+      {completed.length>0 && pending.length>0 && (
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:'1px',color:C.textMuted,textTransform:'uppercase',margin:'20px 0 8px'}}>Completed</div>
+      )}
+      {completed.map(t=><TaskRow key={t.id} t={t}/>)}
+    </div>
+  );
+}
+
+// ─── CONTACTS ────────────────────────────────────────────────────────────────
+function ContactCard({c}) {
+  const [open,setOpen]=useState(false);
+  return (
+    <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:12,padding:20,marginBottom:12}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',cursor:'pointer'}} onClick={()=>setOpen(!open)}>
+        <div>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
+            <span style={{fontWeight:700,fontSize:15,color:C.dark}}>{c.name}</span>
+            <Badge text={c.signal} color={c.signalColor}/>
+          </div>
+          <div style={{fontSize:13,color:C.textMuted,marginBottom:6}}>{c.why}</div>
+          <div style={{display:'flex',gap:8,alignItems:'center'}}>
+            <ChannelBadge ch={c.channel}/>
+            <span style={{fontSize:11,color:C.textMuted}}>{c.tip}</span>
+          </div>
+        </div>
+        <span style={{color:C.textMuted,fontSize:18,marginLeft:12,flexShrink:0}}>{open?'▲':'▼'}</span>
+      </div>
+      {open && (
+        <div style={{marginTop:16,background:C.orange+'08',border:`1px solid ${C.orange}22`,borderRadius:8,padding:16}}>
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:C.orange,marginBottom:8}}>Messaging POV</div>
+          <div style={{fontSize:14,color:C.dark,lineHeight:1.65}}>{c.messaging}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── ACCOUNT PAGE ────────────────────────────────────────────────────────────
+function AccountPage({acct}) {
+  const [tab,setTab]=useState('brief');
+  const tabStyle = active => ({
+    background:active?C.orange:'transparent',
+    color:active?C.white:C.textMuted,
+    border:`1px solid ${active?C.orange:C.border}`,
+  });
+
+  return (
+    <div style={{fontFamily:'system-ui,-apple-system,sans-serif',color:C.dark}}>
+      {/* Hero */}
+      <div style={{background:C.dark,padding:'64px 32px 56px'}}>
+        <div style={{maxWidth:900,margin:'0 auto'}}>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20,flexWrap:'wrap'}}>
+            <Badge text={acct.industry}/>
+            <Badge text={acct.signal} color={acct.signalColor}/>
+            <Badge text="Net-New Prospect" color={C.grayMid} bg={C.grayMid+'22'}/>
+          </div>
+          <h1 style={{color:C.white,fontSize:36,fontWeight:800,lineHeight:1.2,marginBottom:18,maxWidth:680}}>{acct.heroTitle}</h1>
+          <p style={{color:'#BBBBBB',fontSize:17,lineHeight:1.7,maxWidth:640}}>{acct.heroSub}</p>
+
+          {/* Tab bar */}
+          <div style={{display:'flex',gap:8,marginTop:32,flexWrap:'wrap'}}>
+            {['brief','tasks','one-pager'].map(t=>(
+              <button key={t} className="tab-btn" style={tabStyle(tab===t)} onClick={()=>setTab(t)}>
+                {t==='brief'?'Full Brief':t==='tasks'?`Tasks (${acct.tasks.length})`:'One-Pager'}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {tab==='tasks' && (
+        <Section title="AE Tasks">
+          <p style={{fontSize:14,color:C.textMuted,marginBottom:24}}>Task completion is saved in your browser. Check off each step as you go.</p>
+          <TaskList accountId={acct.id} tasks={acct.tasks}/>
+        </Section>
+      )}
+
+      {tab==='one-pager' && (
+        <Section title="One-Pager Generator">
+          <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:14,padding:32,maxWidth:640}}>
+            <div style={{fontSize:22,fontWeight:800,color:C.dark,marginBottom:8}}>Generate a leave-behind for {acct.name}</div>
+            <p style={{fontSize:14,color:C.textMuted,lineHeight:1.65,marginBottom:24}}>The <strong>account-and-products-one-pager</strong> skill generates a polished, account-personalized .docx file — branded with Amplitude blue, with product sections, specific use cases, and AI callouts. It researches the account first using Granola, Salesforce, Outreach, and web search before writing a word.</p>
+
+            <div style={{background:C.grayLight,borderRadius:10,padding:20,marginBottom:24}}>
+              <div style={{fontSize:11,fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:C.orange,marginBottom:10}}>Products to include for {acct.name}</div>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                {acct.products_detail.map(p=>(
+                  <span key={p.name} style={{background:C.orange,color:'#fff',borderRadius:6,padding:'4px 12px',fontSize:12,fontWeight:700}}>{p.name}</span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{background:'#2962FF'+'0D',border:`1px solid #2962FF33`,borderRadius:10,padding:20,marginBottom:24}}>
+              <div style={{fontSize:11,fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:'#2962FF',marginBottom:8}}>Prompt to use in Claude</div>
+              <div style={{fontFamily:'monospace',fontSize:13,color:C.dark,lineHeight:1.6,userSelect:'all'}}>
+                Make a one-pager for {acct.name} featuring {acct.products_detail.map(p=>p.name).join(', ')}
+              </div>
+            </div>
+
+            <p style={{fontSize:12,color:C.textMuted,lineHeight:1.5}}>The skill will ask you to confirm the account name and product selection, research the account, write personalized content, and deliver a .docx file you can open in Google Drive or share directly with the prospect.</p>
+          </div>
+        </Section>
+      )}
+
+      {tab==='brief' && <>
+        {/* Stats */}
+        <Section bg={C.grayLight}>
+          <div style={{display:'flex',gap:16,flexWrap:'wrap'}}>
+            {acct.stats.map(s=>(
+              <div key={s.label} style={{textAlign:'center',padding:'20px 28px',background:C.white,borderRadius:12,border:`1px solid ${C.border}`,flex:'1 1 140px'}}>
+                <div style={{fontSize:28,fontWeight:800,color:C.orange,marginBottom:4}}>{s.value}</div>
+                <div style={{fontSize:12,color:C.textMuted}}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* Challenge */}
+        <Section title="The Challenge">
+          <h2 style={{fontSize:22,fontWeight:800,marginBottom:14}}>{acct.challengeTitle}</h2>
+          <p style={{fontSize:15,color:C.textMuted,lineHeight:1.75,maxWidth:720}}>{acct.challengeBody}</p>
+        </Section>
+
+        {/* Tech Stack */}
+        <Section title="Current Tech Stack" bg={C.grayLight}>
+          <p style={{fontSize:14,color:C.textMuted,marginBottom:20}}>Confirmed and likely tools detected. Each represents a displacement or consolidation opportunity.</p>
+          <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:28}}>
+            {acct.techStack.map(t=>(
+              <div key={t.tool} style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:10,padding:16,display:'flex',gap:16,alignItems:'flex-start'}}>
+                <div style={{minWidth:120}}>
+                  <div style={{fontWeight:700,fontSize:14,color:C.dark,marginBottom:4}}>{t.tool}</div>
+                  <div style={{fontSize:11,color:C.textMuted,marginBottom:6}}>{t.category}</div>
+                  <ConfidenceBadge level={t.confidence}/>
+                </div>
+                <div style={{flex:1,borderLeft:`1px solid ${C.border}`,paddingLeft:16}}>
+                  <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.5px',color:C.orange,marginBottom:4}}>Displacement angle</div>
+                  <div style={{fontSize:13,color:C.dark,lineHeight:1.55}}>{t.displacement}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          {acct.gaps.length>0 && (
+            <>
+              <div style={{fontSize:12,fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:C.red,marginBottom:12}}>Confirmed Gaps — No Tool Detected</div>
+              <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+                {acct.gaps.map(g=>(
+                  <div key={g.name} style={{background:C.red+'08',border:`1px solid ${C.red}33`,borderRadius:8,padding:'10px 16px',flex:'1 1 240px'}}>
+                    <div style={{fontWeight:700,fontSize:13,color:C.red,marginBottom:4}}>{g.name}</div>
+                    <div style={{fontSize:12,color:C.dark,lineHeight:1.5}}>{g.detail}</div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </Section>
+
+        {/* Where Amplitude Fits */}
+        <Section title="Where Amplitude Fits">
+          <div style={{display:'flex',gap:20,flexWrap:'wrap'}}>
+            {acct.features.map(f=>(
+              <div key={f.title} style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:12,padding:24,flex:'1 1 240px'}}>
+                <div style={{fontSize:26,marginBottom:10}}>{f.icon}</div>
+                <div style={{fontWeight:700,fontSize:15,marginBottom:8,color:C.dark}}>{f.title}</div>
+                <div style={{fontSize:13,color:C.textMuted,lineHeight:1.6}}>{f.body}</div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* Suggested Contacts */}
+        <Section title="Suggested Contacts — ZoomInfo" bg={C.grayLight}>
+          <p style={{fontSize:14,color:C.textMuted,marginBottom:20}}>5 contacts ranked by MEDDICC priority. Click any row to see messaging POV. Verify names on LinkedIn before outreach — ZoomInfo data may lag role changes.</p>
+          {acct.contacts.map(c=><ContactCard key={c.name} c={c}/>)}
+        </Section>
+
+        {/* Why Now */}
+        <Section title="Why Now">
+          <div style={{background:C.orange+'0D',border:`1px solid ${C.orange}33`,borderRadius:12,padding:28}}>
+            {acct.whyNow.map((p,i)=>(
+              <p key={i} style={{fontSize:15,lineHeight:1.8,color:C.dark,marginBottom:i<acct.whyNow.length-1?14:0}}>{p}</p>
+            ))}
+          </div>
+        </Section>
+
+        {/* Recommended Products */}
+        <Section title="Recommended Products" bg={C.grayLight}>
+          <div style={{display:'flex',gap:16,flexWrap:'wrap'}}>
+            {acct.products_detail.map(p=>(
+              <div key={p.name} style={{flex:'1 1 220px',background:C.white,border:`1px solid ${C.border}`,borderRadius:12,padding:22}}>
+                <div style={{display:'inline-block',background:C.orange,color:'#fff',borderRadius:6,padding:'4px 12px',fontSize:13,fontWeight:700,marginBottom:10}}>{p.name}</div>
+                <p style={{fontSize:13,color:C.textMuted,lineHeight:1.6,margin:0}}>{p.desc}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* CTA */}
+        <div style={{background:C.dark,padding:'56px 32px',textAlign:'center'}}>
+          <div style={{maxWidth:560,margin:'0 auto'}}>
+            <h2 style={{color:C.white,fontSize:24,fontWeight:800,marginBottom:14}}>Ready to see it in action?</h2>
+            <p style={{color:'#999',fontSize:15,marginBottom:28,lineHeight:1.6}}>We've built a tailored demo for {acct.name}. 30 minutes — no slide decks, just your data and your use cases.</p>
+            <a href="https://amplitude.com/demo" target="_blank" rel="noreferrer" style={{background:C.orange,color:'#fff',padding:'12px 32px',borderRadius:8,fontWeight:700,fontSize:15,textDecoration:'none',display:'inline-block'}}>Book a 30-min Demo →</a>
+          </div>
+        </div>
+      </>}
+    </div>
+  );
+}
+
+// ─── HOME PAGE ───────────────────────────────────────────────────────────────
+function HomePage({setPage}) {
+  return (
+    <div style={{minHeight:'100vh',background:C.grayLight}}>
+      <div style={{background:C.dark,padding:'72px 32px 64px',textAlign:'center'}}>
+        <Badge text="Net-New Prospects Only · No Existing Customers"/>
+        <h1 style={{color:C.white,fontSize:38,fontWeight:800,marginTop:18,marginBottom:14,lineHeight:1.2}}>Amplitude for your business.</h1>
+        <p style={{color:'#999',fontSize:17,maxWidth:500,margin:'0 auto',lineHeight:1.6}}>Research briefs built around each prospect's specific use cases, tech stack, and buying signals.</p>
+      </div>
+      <div style={{maxWidth:900,margin:'0 auto',padding:'44px 32px',display:'flex',gap:24,flexWrap:'wrap'}}>
+        {Object.values(ACCOUNTS).map(a=>(
+          <div key={a.id} className="hover-lift" onClick={()=>setPage(a.id)}
+            style={{flex:'1 1 340px',background:C.white,border:`1px solid ${C.border}`,borderRadius:16,padding:32,cursor:'pointer',boxShadow:'0 1px 4px rgba(0,0,0,.06)'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:18}}>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:C.textMuted,marginBottom:5}}>{a.industry}</div>
+                <div style={{fontSize:22,fontWeight:800,color:C.dark}}>{a.name}</div>
+              </div>
+              <span style={{background:a.signalColor+'18',color:a.signalColor,border:`1px solid ${a.signalColor}33`,borderRadius:20,padding:'4px 12px',fontSize:11,fontWeight:700}}>{a.signal}</span>
+            </div>
+            <p style={{fontSize:14,color:C.textMuted,lineHeight:1.6,marginBottom:20}}>{a.summary}</p>
+            <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:24}}>
+              {a.products.map(p=><span key={p} style={{background:C.grayLight,color:C.grayMid,borderRadius:6,padding:'3px 10px',fontSize:12,fontWeight:600}}>{p}</span>)}
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <span style={{color:C.orange,fontWeight:700,fontSize:13}}>View brief →</span>
+              <span style={{fontSize:12,color:C.textMuted}}>{a.tasks.length} tasks · {a.contacts.length} contacts</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── NAV ─────────────────────────────────────────────────────────────────────
+function Nav({page,setPage}) {
+  return (
+    <nav style={{background:C.dark,padding:'0 32px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:100}}>
+      <button onClick={()=>setPage('home')} style={{background:'none',border:'none',cursor:'pointer',display:'flex',alignItems:'center',gap:8}}>
+        <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill={C.orange}/>
+          <path d="M8 22L16 10L24 22" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <span style={{color:C.white,fontWeight:700,fontSize:16}}>Prospect Hub</span>
+      </button>
+      <div style={{display:'flex',gap:6}}>
+        {Object.values(ACCOUNTS).map(a=>(
+          <button key={a.id} className="tab-btn" onClick={()=>setPage(a.id)}
+            style={{background:page===a.id?C.orange:'transparent',color:page===a.id?C.white:'#999',border:`1px solid ${page===a.id?C.orange:'#333'}`}}>
+            {a.name}
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
+// ─── ROOT ─────────────────────────────────────────────────────────────────────
+function App() {
+  const [page,setPage]=useState('home');
+  const acct = ACCOUNTS[page];
+  return (
+    <div>
+      <Nav page={page} setPage={setPage}/>
+      {page==='home' ? <HomePage setPage={setPage}/> : <AccountPage acct={acct}/>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
