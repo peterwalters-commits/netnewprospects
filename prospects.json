@@ -1,8 +1,73 @@
 {
   "$schema": "Prospects feed v1 — committed weekly by Claude/cowork skill",
   "version": 1,
-  "generatedAt": "2026-04-20T19:00:00Z",
+  "generatedAt": "2026-04-20T19:30:00Z",
   "prospects": [
+    {
+      "slug": "portillos",
+      "company": "Portillo's",
+      "industry": "Restaurant / Hospitality",
+      "status": "active",
+      "statusLabel": "New CEO + CMO Installed",
+      "summary": "Public restaurant chain ($732M rev, 88 locations) with 2.1M loyalty members and no analytics layer. New CEO Feb 2026, new CMO Sept 2025, Hotjar confirmed.",
+      "tags": ["Experiment", "Session Replay", "Analytics"],
+      "overview": "Portillo's (NASDAQ: PTLO) is an iconic Chicago-style fast-casual chain with 88 locations and $732M in annual revenue. Their Portillo's Perks loyalty program — launched March 2025 — has scaled to 2.1M members driving over 10% of system-wide sales, but there is no product analytics layer sitting on top of it.",
+      "whyNow": [
+        "New CEO Brett Patterson started Feb 23, 2026 — 90-day audit window for digital/data stack review",
+        "CMO Denise Lauer (hired Sept 2025) owns Perks and will need behavioral analytics to prove program ROI",
+        "Perks is 1 year old with 2.1M members and >10% of sales — public company faces quarterly scrutiny on incremental frequency"
+      ],
+      "techStack": ["Hotjar", "Google Analytics (GA4)", "Olo", "Meta Pixel"],
+      "signals": [
+        { "label": "Exec Change", "detail": "Brett Patterson joined as CEO Feb 23, 2026 — 90-day audit window for digital and data stack review is open now" },
+        { "label": "Exec Change", "detail": "Denise Lauer joined as CMO Sept 2025 — directly owns Portillo's Perks, digital, loyalty analytics, and social" },
+        { "label": "Competitor", "detail": "Hotjar confirmed in privacy policy — displacement play for Session Replay tied to Perks member IDs" }
+      ],
+      "tasks": [
+        { "title": "LinkedIn DM to Denise Lauer (CMO)", "detail": "Lead with loyalty analytics gap: 'When the board asks whether Perks is driving incremental frequency — what's your answer today?' Under 3 sentences, no deck." },
+        { "title": "LinkedIn DM to Keith Correia (CIO)", "detail": "He built a personalization platform at Steak 'n Shake — reference the Olo integration angle: 'No re-instrumentation needed.'" },
+        { "title": "Email to Brett Patterson (CEO)", "detail": "New CEO audit window. Subject: 'One data gap that typically bites restaurant brands in new markets.' 4 sentences, no attachment." },
+        { "title": "Check #alliances for Olo partner overlap", "detail": "Olo powers Portillo's ordering layer. Post in Slack: 'Anyone own the Olo partnership? Portillo's uses them.' Get the name before going cold." }
+      ],
+      "contacts": [
+        { "name": "Denise Lauer", "title": "Chief Marketing Officer" },
+        { "name": "Brett Patterson", "title": "President & CEO" },
+        { "name": "Keith Correia", "title": "Chief Information Officer" }
+      ]
+    },
+    {
+      "slug": "c2fo",
+      "company": "C2FO",
+      "industry": "FinTech",
+      "status": "active",
+      "statusLabel": "Expansion Signal",
+      "summary": "C2FO just launched in Nigeria and closed $30M. As the platform expands globally, product intelligence needs to keep pace.",
+      "tags": ["Analytics", "Session Replay", "CDP"],
+      "overview": "C2FO is a working capital marketplace connecting buyers and suppliers to accelerate cash flow through dynamic early payment programs. They've facilitated over $400B in working capital across 2M+ companies in 180+ countries, and recently launched CycleFlow in Nigeria and expanded into India via C2treds.",
+      "whyNow": [
+        "CycleFlow launched in Nigeria — new market, narrow window to instrument before the next expansion",
+        "$30M IFC investment earmarked for platform acceleration — tooling decisions being made now",
+        "No confirmed product analytics tool — onboarding funnel visibility is blind across new markets"
+      ],
+      "techStack": ["Google Analytics", "Tableau / BI (likely)", "Datadog / New Relic (likely)", "Salesforce Marketing Cloud"],
+      "signals": [
+        { "label": "Funding", "detail": "$30M raised from IFC to accelerate global platform expansion across emerging markets" },
+        { "label": "Product Launch", "detail": "CycleFlow launched in Nigeria — first phase of a continent-wide working capital strategy" },
+        { "label": "Expansion", "detail": "3 new market launches since 2024 (Nigeria, India via C2treds, Southeast Asia) — no behavioral analytics layer confirmed" }
+      ],
+      "tasks": [
+        { "title": "Request warm intro via IFC network", "detail": "IFC is an Amplitude strategic partner. Ping #alliances: 'IFC just invested $30M in C2FO — can we get a warm intro through the IFC partnership?'" },
+        { "title": "First outreach to CPO", "detail": "Lead with Nigeria onboarding visibility gap. Reference $30M IFC round as mandate to move fast. Angle: 'When Nigeria onboarding dropped, how fast did you know why?'" },
+        { "title": "Enroll in global expansion Outreach sequence", "detail": "Tag account with 'expansion signal' and '$30M raise'. Note IFC intro attempt in SFDC." },
+        { "title": "LinkedIn follow-up to Head of Data Analytics", "detail": "Data self-serve angle: 'C2FO's PMs are asking behavioral questions your BI stack wasn't built for.' Under 100 words." }
+      ],
+      "contacts": [
+        { "name": "Find: Chief Product Officer", "title": "Economic Buyer — owns onboarding success in new markets" },
+        { "name": "Find: Head of Data Analytics", "title": "Champion — building dashboards that can't answer behavioral questions" },
+        { "name": "Find: VP Engineering / CTO", "title": "Technical Buyer — IFC investment means infra needs to scale" },
+        { "name": "Sandy Kemper", "title": "Founder & CEO" }
+      ]
+    },
     {
       "slug": "branch-app",
       "company": "Branch App",
