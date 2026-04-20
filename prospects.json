@@ -1,7 +1,7 @@
 {
   "$schema": "Prospects feed v1 — committed weekly by Claude/cowork skill",
   "version": 1,
-  "generatedAt": "2026-04-20T19:30:00Z",
+  "generatedAt": "2026-04-20T20:00:00Z",
   "prospects": [
     {
       "slug": "portillos",
@@ -30,9 +30,9 @@
         { "title": "Check #alliances for Olo partner overlap", "detail": "Olo powers Portillo's ordering layer. Post in Slack: 'Anyone own the Olo partnership? Portillo's uses them.' Get the name before going cold." }
       ],
       "contacts": [
-        { "name": "Denise Lauer", "title": "Chief Marketing Officer" },
-        { "name": "Brett Patterson", "title": "President & CEO" },
-        { "name": "Keith Correia", "title": "Chief Information Officer" }
+        { "name": "Denise Lauer", "title": "Chief Marketing Officer", "linkedin": "https://www.linkedin.com/in/deniselauer", "email": "dlauer@portillos.com" },
+        { "name": "Brett Patterson", "title": "President & CEO", "linkedin": "https://www.linkedin.com/in/brett-patterson-0323b219", "email": null },
+        { "name": "Keith Correia", "title": "Chief Information Officer", "linkedin": "https://www.linkedin.com/in/keith-correia", "email": null }
       ]
     },
     {
@@ -57,15 +57,15 @@
       ],
       "tasks": [
         { "title": "Request warm intro via IFC network", "detail": "IFC is an Amplitude strategic partner. Ping #alliances: 'IFC just invested $30M in C2FO — can we get a warm intro through the IFC partnership?'" },
-        { "title": "First outreach to CPO", "detail": "Lead with Nigeria onboarding visibility gap. Reference $30M IFC round as mandate to move fast. Angle: 'When Nigeria onboarding dropped, how fast did you know why?'" },
-        { "title": "Enroll in global expansion Outreach sequence", "detail": "Tag account with 'expansion signal' and '$30M raise'. Note IFC intro attempt in SFDC." },
-        { "title": "LinkedIn follow-up to Head of Data Analytics", "detail": "Data self-serve angle: 'C2FO's PMs are asking behavioral questions your BI stack wasn't built for.' Under 100 words." }
+        { "title": "Email Anne Steinhaus (Chief Product & Technology Officer)", "detail": "Lead with Nigeria onboarding visibility gap. 'When CycleFlow launched in Nigeria, how fast did you know whether the onboarding flow was working for local SMEs?'" },
+        { "title": "LinkedIn to Rahul Mann (VP Product Management)", "detail": "Champion angle: 'Your PMs are launching in new markets without behavioral analytics — Amplitude gives them self-serve answers without waiting on data.' Under 100 words." },
+        { "title": "Enroll in global expansion Outreach sequence", "detail": "Tag account with 'expansion signal' and '$30M raise'. Note IFC intro attempt in SFDC." }
       ],
       "contacts": [
-        { "name": "Find: Chief Product Officer", "title": "Economic Buyer — owns onboarding success in new markets" },
-        { "name": "Find: Head of Data Analytics", "title": "Champion — building dashboards that can't answer behavioral questions" },
-        { "name": "Find: VP Engineering / CTO", "title": "Technical Buyer — IFC investment means infra needs to scale" },
-        { "name": "Sandy Kemper", "title": "Founder & CEO" }
+        { "name": "Anne Steinhaus", "title": "Chief Product & Technology Officer", "linkedin": "https://www.linkedin.com/in/annesteinhaus", "email": "anne.steinhaus@c2fo.com" },
+        { "name": "Rahul Mann", "title": "VP, Product Management", "linkedin": "https://www.linkedin.com/in/rahul-mann-b771b830", "email": null },
+        { "name": "Karen Sandnes", "title": "VP, Sales Technology & Analytics", "linkedin": "https://www.linkedin.com/in/karen-hiemer-sandnes", "email": "karen.sandnes@c2fo.com" },
+        { "name": "Sandy Kemper", "title": "Founder & CEO", "linkedin": "https://www.linkedin.com/in/alexander-sandy-kemper", "email": "sandy.kemper@c2fo.com" }
       ]
     },
     {
@@ -89,17 +89,17 @@
         { "label": "Hiring", "detail": "Engineering hiring at 12-month high as of Nov 2025 — building fast across platform, UX, and payments infra" }
       ],
       "tasks": [
-        { "title": "Reach out to Lies De Feyter (Director, Analytics & Insights)", "detail": "Sharpest Amplitude champion. Lead with: 'You have two analytics directors and a new CFO — what does your product analytics stack look like today?'" },
-        { "title": "LinkedIn to David Tran (Head of Product)", "detail": "Branch Embedded just hit 6 months live. Ask: 'How are you measuring adoption across your hospitality and logistics verticals?'" },
-        { "title": "Email Mitchell Coopet (CTO) on Session Replay angle", "detail": "Payments UI is high-stakes — drop-off in wallet setup costs real revenue." },
-        { "title": "Enroll in FinTech/HRTech Outreach sequence", "detail": "Tag in SFDC. Note new CFO hire and Stripe launch as timing hooks." }
+        { "title": "Email Lies De Feyter (Director, Analytics & Insights)", "detail": "Sharpest champion. Lead with: 'You have two analytics directors and a new CFO — what does your product analytics stack look like today?'" },
+        { "title": "LinkedIn to Zachary Fransen (VP, Data & Analytics)", "detail": "Second analytics leader. Angle: 'Branch Embedded just hit 6 months — how are you measuring adoption across hospitality and logistics verticals?'" },
+        { "title": "LinkedIn to David Tran (Head of Product)", "detail": "Product angle: 'Payments UI is high-stakes — drop-off in wallet setup costs real revenue. How are you diagnosing friction today?'" },
+        { "title": "Email Mitchell Coopet (CTO) on Session Replay", "detail": "Payments UI is high-stakes — drop-off in wallet setup costs real revenue. Reference Branch Embedded as the use case." }
       ],
       "contacts": [
-        { "name": "Lies De Feyter", "title": "Director, Analytics & Insights" },
-        { "name": "David Tran", "title": "Head of Product" },
-        { "name": "Mitchell Coopet", "title": "Chief Technology Officer" },
-        { "name": "Andrew Wieck", "title": "Director, Reporting & Analytics" },
-        { "name": "Atif Siddiqi", "title": "Founder & CEO" }
+        { "name": "Lies De Feyter", "title": "Director, Analytics & Insights", "linkedin": "https://www.linkedin.com/in/liesdefeyter", "email": "lies.defeyter@branchapp.com" },
+        { "name": "Zachary Fransen", "title": "VP, Data & Analytics", "linkedin": "https://www.linkedin.com/in/zachary-fransen-701a676", "email": "zachary.fransen@branchapp.com" },
+        { "name": "David Tran", "title": "Head of Product", "linkedin": null, "email": "dave@branchapp.com" },
+        { "name": "Mitchell Coopet", "title": "Chief Technology Officer", "linkedin": "https://www.linkedin.com/in/mcoopet", "email": "mitch.coopet@branchapp.com" },
+        { "name": "Andrew Wieck", "title": "Director, Reporting & Analytics", "linkedin": "https://www.linkedin.com/in/andrew-wieck-26abb7a", "email": "andrew.wieck@branchapp.com" }
       ]
     }
   ]
