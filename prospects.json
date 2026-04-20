@@ -1,0 +1,41 @@
+{
+  "$schema": "Prospects feed v1 — committed weekly by Claude/cowork skill",
+  "version": 1,
+  "generatedAt": "2026-04-20T19:00:00Z",
+  "prospects": [
+    {
+      "slug": "branch-app",
+      "company": "Branch App",
+      "industry": "FinTech / HRTech",
+      "status": "active",
+      "statusLabel": "New CFO + Stripe Launch",
+      "summary": "Branch just hired a new CFO and launched an embedded digital wallet with Stripe. Two analytics directors on staff confirm budget — no confirmed product analytics tool.",
+      "tags": ["Analytics", "Session Replay", "Experiment"],
+      "overview": "Branch is a workforce payments platform helping businesses pay hourly workers faster via earned wage access, instant pay, and an embedded digital wallet. 278 employees, headquartered in Minneapolis. Key verticals: hospitality, logistics, healthcare. Recently launched Branch Embedded (Sep 2025) — a white-label payments product for enterprise clients built on Stripe.",
+      "whyNow": [
+        "New CFO hired Feb 2026 — fresh exec, tooling decisions being revisited",
+        "Stripe embedded wallet launched Mar 2026 — new product surface needs behavioral instrumentation",
+        "Branch Embedded live since Sep 2025 — 6 months in, time to measure feature adoption by vertical"
+      ],
+      "techStack": ["Salesforce", "Stripe", "Mixpanel (likely)", "Google Analytics", "Looker (likely)"],
+      "signals": [
+        { "label": "Exec Change", "detail": "Matthew Peterson hired as CFO Feb 2026 (prev CFO at Snappy) — new exec brings fresh tooling review cycle" },
+        { "label": "Product Launch", "detail": "Stripe embedded digital wallet partnership announced Mar 2026 — new payment product surface requires user behavior analytics" },
+        { "label": "Hiring", "detail": "Engineering hiring at 12-month high as of Nov 2025 — building fast across platform, UX, and payments infra" }
+      ],
+      "tasks": [
+        { "title": "Reach out to Lies De Feyter (Director, Analytics & Insights)", "detail": "Sharpest Amplitude champion. Lead with: 'You have two analytics directors and a new CFO — what does your product analytics stack look like today?'" },
+        { "title": "LinkedIn to David Tran (Head of Product)", "detail": "Branch Embedded just hit 6 months live. Ask: 'How are you measuring adoption across your hospitality and logistics verticals?'" },
+        { "title": "Email Mitchell Coopet (CTO) on Session Replay angle", "detail": "Payments UI is high-stakes — drop-off in wallet setup costs real revenue." },
+        { "title": "Enroll in FinTech/HRTech Outreach sequence", "detail": "Tag in SFDC. Note new CFO hire and Stripe launch as timing hooks." }
+      ],
+      "contacts": [
+        { "name": "Lies De Feyter", "title": "Director, Analytics & Insights" },
+        { "name": "David Tran", "title": "Head of Product" },
+        { "name": "Mitchell Coopet", "title": "Chief Technology Officer" },
+        { "name": "Andrew Wieck", "title": "Director, Reporting & Analytics" },
+        { "name": "Atif Siddiqi", "title": "Founder & CEO" }
+      ]
+    }
+  ]
+}
